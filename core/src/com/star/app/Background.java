@@ -1,6 +1,5 @@
 package com.star.app;
 
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -30,7 +29,6 @@ public class Background {
             }
         }
     }
-
 
     private final int STAR_COUNT = 2000;
     private StarGame starGame;
