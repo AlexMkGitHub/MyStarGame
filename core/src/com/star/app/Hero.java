@@ -47,10 +47,46 @@ public class Hero {
             lastDisplacement.set(0, 0);
         }
 
+        /*------------Управление задним ходом корабля-------------------------------------*/
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            position.x -= MathUtils.cosDeg(angle) * 120.0f * dt;
+            position.y -= MathUtils.sinDeg(angle) * 120.0f * dt;
+            lastDisplacement.set(MathUtils.cosDeg(angle) * 120.0f * dt, MathUtils.sinDeg(angle) * 120.0f * dt);
+        } else {
+            lastDisplacement.set(0, 0);
+        }
+
+        /*------------Определение границы экрана, чтобы корабль не улетал за его пределы.----------------*/
         if (position.x < 32) {
             position.x = 32;
-
         }
+        if (position.y < 32) {
+            position.y = 32;
+        }
+        if (position.x > ScreenManager.SCREEN_WIDTH - 32) {
+            position.x = ScreenManager.SCREEN_WIDTH - 32;
+        }
+        if (position.y > ScreenManager.SCREEN_HIEGHT - 32) {
+            position.y = ScreenManager.SCREEN_HIEGHT - 32;
+        }
+
+        /*------------Чтобы кораль появлялся в противоположной части экрана если улетел за его границу------------------*/
+//        if (position.x < - 32) {
+//            position.x = ScreenManager.SCREEN_WIDTH + 32;
+//        }else {
+//            if (position.x > ScreenManager.SCREEN_WIDTH + 32) {
+//                position.x = -32;
+//            }
+//        }
+//
+//        if (position.y < -32) {
+//            position.y = ScreenManager.SCREEN_HIEGHT + 32;
+//        }else{
+//            if (position.y > ScreenManager.SCREEN_HIEGHT + 32) {
+//                position.y = -32;
+//            }
+//        }
+//    }
     }
 }
 
