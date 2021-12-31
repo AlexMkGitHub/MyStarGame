@@ -7,7 +7,6 @@ public class WorldRenderer {
     private GameController gc;
     private SpriteBatch batch;
 
-
     public WorldRenderer(GameController gc, SpriteBatch batch) {
         this.gc = gc;
         this.batch = batch;
@@ -20,8 +19,7 @@ public class WorldRenderer {
         gc.getHero().render(batch);
         gc.getBulletController().render(batch);
         gc.getAsteroidController().render(batch);
-
-        //gc.checkCollisions(batch);
+        gc.checkCollisions(batch);
         batch.end();
     }
 

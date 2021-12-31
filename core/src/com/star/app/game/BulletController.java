@@ -20,7 +20,8 @@ public class BulletController extends ObjectPool<Bullet> {
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
             Bullet b = activeList.get(i);
-            batch.draw(bulletTexture, b.getPosition().x - 16, b.getPosition().y - 16);
+            batch.draw(bulletTexture, b.getPosition().x-16, b.getPosition().y-16, 16, 16, 32, 32, 1.0f,
+                    1.0f,0.0f, 0, 0, 32, 32, false, false);
         }
     }
 
