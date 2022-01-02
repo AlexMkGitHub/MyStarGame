@@ -37,8 +37,8 @@ public class BulletController extends ObjectPool<Bullet> {
     }
 
     public void boomBullet(Vector2 v, SpriteBatch batch) {
-        batch.draw(bulletTexture, v.x, v.y, -16, -16, 32, 32, 4f,
-                4f, 0.0f, 0, 0, 32, 32, false, false);
+        batch.draw(bulletTexture, v.x-16, v.y-16, 16, 16, 32, 32, 4f,
+                4f, 0.0f, 32, 32, 32, 32, false, false);
     }
 
 }

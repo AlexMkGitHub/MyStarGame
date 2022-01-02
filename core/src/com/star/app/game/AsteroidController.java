@@ -15,12 +15,14 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     private float angle;
     private float scale;
 
+
     @Override
     protected Asteroid newObject() {
         return new Asteroid();
     }
 
-    public AsteroidController() {
+    public AsteroidController(GameController gc) {
+
     }
 
     public Vector2 getPosition() {
@@ -44,8 +46,8 @@ public class AsteroidController extends ObjectPool<Asteroid> {
                     position.x < -258 || position.y < -258) {
                 a.deactivate();
             } else {
-                batch.draw(asteroidTexture, position.x, position.y, 256* scale, 256 * scale, 256 * scale, 256 * scale, 1,
-                        1, angle, 0, 0, 256, 256, false, false);
+                batch.draw(asteroidTexture, position.x - 128 * scale, position.y - 128 * scale, 128 * scale, 128 * scale, 256 * scale, 256 * scale, scale,
+                        scale, angle, 0, 0, 256, 256, false, false);
                 position.x += velocity.x * dt;
                 position.y += velocity.y * dt;
             }
