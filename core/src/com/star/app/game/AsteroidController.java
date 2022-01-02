@@ -44,7 +44,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
                     position.x < -258 || position.y < -258) {
                 a.deactivate();
             } else {
-                batch.draw(asteroidTexture, position.x, position.y, 128* scale, 128 * scale, 256 * scale, 256 * scale, 1,
+                batch.draw(asteroidTexture, position.x, position.y, 256* scale, 256 * scale, 256 * scale, 256 * scale, 1,
                         1, angle, 0, 0, 256, 256, false, false);
                 position.x += velocity.x * dt;
                 position.y += velocity.y * dt;
@@ -60,8 +60,8 @@ public class AsteroidController extends ObjectPool<Asteroid> {
 
         if (activeList.isEmpty()) {
             for (int i = 0; i < 4; i++) {
-                position = new Vector2(MathUtils.random(-256, ScreenManager.SCREEN_WIDTH + 256), MathUtils.random(-256,
-                        ScreenManager.SCREEN_HIEGHT + 256));
+                position = new Vector2(MathUtils.random(-230, ScreenManager.SCREEN_WIDTH + 230), MathUtils.random(-230,
+                        ScreenManager.SCREEN_HIEGHT + 230));
                 velocity = new Vector2(MathUtils.random(-100, 100), MathUtils.random(-100, 100));
                 int rndPosition = MathUtils.random(1, 4);
                 switch (rndPosition) {
