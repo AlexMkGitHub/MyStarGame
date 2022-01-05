@@ -35,7 +35,7 @@ public class Bullet implements Poolable {
     public void update(float dt) {
         position.mulAdd(velocity, dt);
         if (position.x <= -20 || position.y <= -20 || position.x >= ScreenManager.SCREEN_WIDTH + 20 ||
-                position.y >= ScreenManager.SCREEN_HIEGHT + 20) {
+                position.y >= ScreenManager.SCREEN_HEIGHT + 20) {
             deactivate();
         }
     }

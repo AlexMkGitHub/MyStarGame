@@ -2,20 +2,27 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 public class Hero {
     private GameController gc;
-    private Texture texture;
+    private TextureRegion texture;
     private Vector2 position;
     private Vector2 velocity;
     private float angle;
     private float enginePower;
     private float fireTimer;
+    private int score;
+    private int scoreView;
+
+    public int getScoreView() {
+        return scoreView;
+    }
 
     public Vector2 getVelocity() {
         return velocity;
@@ -25,10 +32,14 @@ public class Hero {
         return position;
     }
 
+    public void addScore(int amount) {
+        score += amount;
+    }
+
     public Hero(GameController gc) {
         this.gc = gc;
-        this.texture = new Texture("ship.png");
-        this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HIEGHT / 2);
+        this.texture = Assets.getInstance().getAtlas().findRegion("ship");
+        this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 240.0f;
@@ -37,18 +48,41 @@ public class Hero {
 
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 32, position.y - 32, 32, 32, 64, 64, 1,
-                1, angle, 0, 0, 64, 64, false, false);
-
+                1, angle);
     }
 
     public void update(float dt) {
         fireTimer += dt;
+        if (scoreView < score) {
+            scoreView += 2000 * dt;
+            if (scoreView > score) {
+                scoreView = score;
+            }
+        }
+        float wx;
+        float wy;
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (fireTimer > 0.2f) {
                 fireTimer = 0.0f;
-                gc.getBulletController().setup(position.x, position.y,
+                /* Стрельба только с носа корабля
+                wx = position.x + MathUtils.cosDeg(angle) * 20.0f;
+                wy = position.y + MathUtils.sinDeg(angle) * 20.0f;
+                */
+
+                /*---Двойная cтрельба с крыльев корабля---*/
+                //Левое крыло
+                wx = position.x + MathUtils.cosDeg(angle + 90) * 25.0f;
+                wy = position.y + MathUtils.sinDeg(angle + 90) * 25.0f;
+                gc.getBulletController().setup(wx, wy,
                         MathUtils.cosDeg(angle) * 500.0f + velocity.x,
                         MathUtils.sinDeg(angle) * 500.0f + velocity.y);
+                //Правое крыло
+                wx = position.x + MathUtils.cosDeg(angle - 90) * 25.0f;
+                wy = position.y + MathUtils.sinDeg(angle - 90) * 25.0f;
+                gc.getBulletController().setup(wx, wy,
+                        MathUtils.cosDeg(angle) * 500.0f + velocity.x,
+                        MathUtils.sinDeg(angle) * 500.0f + velocity.y);
+
             }
         }
 
@@ -91,8 +125,8 @@ public class Hero {
             position.x = ScreenManager.SCREEN_WIDTH - 32;
             velocity.x *= -0.5;
         }
-        if (position.y > ScreenManager.SCREEN_HIEGHT - 32) {
-            position.y = ScreenManager.SCREEN_HIEGHT - 32;
+        if (position.y > ScreenManager.SCREEN_HEIGHT - 32) {
+            position.y = ScreenManager.SCREEN_HEIGHT - 32;
             velocity.y *= -0.5;
         }
 
