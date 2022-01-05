@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
@@ -16,9 +17,27 @@ public class Hero {
     private Vector2 velocity;
     private float angle;
     private float enginePower;
+    private int hpMax;
+    private int hp;
+    private Circle hitArea;
     private float fireTimer;
     private int score;
     private int scoreView;
+
+    private final float BASE_SIZE = 64;
+    private final float BASE_RADIUS = BASE_SIZE / 2;
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public Circle getHitArea() {
+        return hitArea;
+    }
 
     public int getScoreView() {
         return scoreView;
@@ -43,7 +62,10 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 240.0f;
-
+        this.hpMax = 100;
+        this.hp = hpMax;
+        this.hitArea = new Circle(position.x, position.y, BASE_RADIUS);
+        this.hitArea.setRadius(BASE_RADIUS);
     }
 
     public void render(SpriteBatch batch) {
@@ -82,7 +104,6 @@ public class Hero {
                 gc.getBulletController().setup(wx, wy,
                         MathUtils.cosDeg(angle) * 500.0f + velocity.x,
                         MathUtils.sinDeg(angle) * 500.0f + velocity.y);
-
             }
         }
 
@@ -112,6 +133,7 @@ public class Hero {
         }
 
         position.mulAdd(velocity, dt);
+        hitArea.setPosition(position);
         /*------------Определение границы экрана, чтобы корабль не улетал за его пределы.----------------*/
         if (position.x < 32) {
             position.x = 32;

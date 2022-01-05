@@ -45,7 +45,20 @@ public class GameController {
         hero.update(dt);
         asteroidController.update(dt);
         bulletController.update(dt);
+        checkHeroImpact();
         checkCollisions();
+    }
+
+
+    private void checkHeroImpact() {
+        for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
+            Asteroid a = asteroidController.getActiveList().get(j);
+            if (a.getHitArea().overlaps(hero.getHitArea())) {
+                a.deactivate();
+                hero.setHp(hero.getHp() - 10);
+                break;
+            }
+        }
     }
 
     private void checkCollisions() {
@@ -53,10 +66,10 @@ public class GameController {
             Bullet b = bulletController.getActiveList().get(i);
             for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
                 Asteroid a = asteroidController.getActiveList().get(j);
-                if (a.getHitArea().contains(b.getPosition())){
+                if (a.getHitArea().contains(b.getPosition())) {
                     b.deactivate();
-                    if(a.takeDamage(1)){
-                        hero.addScore(a.getHpMax()*100);
+                    if (a.takeDamage(1)) {
+                        hero.addScore(a.getHpMax() * 100);
                     }
                     break;
                 }

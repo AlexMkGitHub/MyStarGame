@@ -26,8 +26,11 @@ public class WorldRenderer {
         gc.getBulletController().render(batch);
         gc.getHero().render(batch);
         sb.setLength(0);
+        sb.append("HEALTH: ").append(gc.getHero().getHp());
+        font32.draw(batch, sb, 20, 700);
+        sb.setLength(0);
         sb.append("SCORE: ").append(gc.getHero().getScoreView());
-        font32.draw(batch,sb,20,700);
+        font32.draw(batch, sb, 20, 660);
         batch.end();
     }
 }
