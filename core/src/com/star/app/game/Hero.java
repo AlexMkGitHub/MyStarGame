@@ -2,11 +2,13 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
@@ -23,9 +25,11 @@ public class Hero {
     private float fireTimer;
     private int score;
     private int scoreView;
+    private StringBuilder sb;
+    private Weapon currentWeapon;
 
     private final float BASE_SIZE = 64;
-    private final float BASE_RADIUS = BASE_SIZE / 2;
+    private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
 
     public int getHp() {
         return hp;
@@ -35,12 +39,12 @@ public class Hero {
         this.hp = hp;
     }
 
-    public Circle getHitArea() {
-        return hitArea;
+    public float getAngle() {
+        return angle;
     }
 
-    public int getScoreView() {
-        return scoreView;
+    public Circle getHitArea() {
+        return hitArea;
     }
 
     public Vector2 getVelocity() {
@@ -64,8 +68,23 @@ public class Hero {
         this.enginePower = 240.0f;
         this.hpMax = 100;
         this.hp = hpMax;
-        this.hitArea = new Circle(position.x, position.y, BASE_RADIUS);
+        this.hitArea = new Circle(position, BASE_RADIUS);
         this.hitArea.setRadius(BASE_RADIUS);
+        this.sb = new StringBuilder();
+        this.currentWeapon = new Weapon(gc, this, "Laser", 0.1f, 1, 600f, 300,
+                new Vector3[]{
+                        new Vector3(28, 0, 0),
+                        new Vector3(28, 90, 20),
+                        new Vector3(28, -90, -20),
+                });
+    }
+
+    public void renderGUI(SpriteBatch batch, BitmapFont font) {
+        sb.setLength(0);
+        sb.append("SCORE: ").append(scoreView).append("\n");
+        sb.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
+        sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        font.draw(batch, sb, 20, 700);
     }
 
     public void render(SpriteBatch batch) {
@@ -73,67 +92,142 @@ public class Hero {
                 1, angle);
     }
 
+    public void takeDamage(int amount) {
+        hp -= amount;
+    }
+
     public void update(float dt) {
         fireTimer += dt;
-        if (scoreView < score) {
-            scoreView += 2000 * dt;
-            if (scoreView > score) {
-                scoreView = score;
-            }
-        }
-        float wx;
-        float wy;
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (fireTimer > 0.2f) {
-                fireTimer = 0.0f;
-                /* Стрельба только с носа корабля
-                wx = position.x + MathUtils.cosDeg(angle) * 20.0f;
-                wy = position.y + MathUtils.sinDeg(angle) * 20.0f;
-                */
-
-                /*---Двойная cтрельба с крыльев корабля---*/
-                //Левое крыло
-                wx = position.x + MathUtils.cosDeg(angle + 90) * 25.0f;
-                wy = position.y + MathUtils.sinDeg(angle + 90) * 25.0f;
-                gc.getBulletController().setup(wx, wy,
-                        MathUtils.cosDeg(angle) * 500.0f + velocity.x,
-                        MathUtils.sinDeg(angle) * 500.0f + velocity.y);
-                //Правое крыло
-                wx = position.x + MathUtils.cosDeg(angle - 90) * 25.0f;
-                wy = position.y + MathUtils.sinDeg(angle - 90) * 25.0f;
-                gc.getBulletController().setup(wx, wy,
-                        MathUtils.cosDeg(angle) * 500.0f + velocity.x,
-                        MathUtils.sinDeg(angle) * 500.0f + velocity.y);
-            }
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            angle += 180 * dt;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            angle -= 180 * dt;
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
-            velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
-        }
-
-
+        updateScore(dt);
+        boardControl(dt);
+        position.mulAdd(velocity, dt);
+        hitArea.setPosition(position);
         float stopKoef = 1.0f - 0.8f * dt;
         if (stopKoef < 0.0f) {
             stopKoef = 0.0f;
         }
         velocity.scl(stopKoef);
 
+        checkSpaceBorders();
+    }
+
+    private void boardControl(float dt) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            tryToFire();
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            angle += 180 * dt;
+            /*------------Эффект работы двигателя при ускорении---------------*/
+            float bx = position.x + MathUtils.cosDeg(angle + 90) * 20;
+            float by = position.y + MathUtils.sinDeg(angle + 90) * 20;
+            for (int i = 0; i < 2; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * 0.1f + MathUtils.random(-10, 10), velocity.y * 0.1f + MathUtils.random(-10, 10),
+                        0.4f, 1.2f, 0.2f,
+                        1.0f, 0.5f, 0, 1,
+                        1, 1, 1, 0);
+            }
+            /*----------------------------------------------------------------------*/
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            angle -= 180 * dt;
+            /*------------Эффект работы двигателя при ускорении---------------*/
+            float bx = position.x + MathUtils.cosDeg(angle - 90) * 20;
+            float by = position.y + MathUtils.sinDeg(angle - 90) * 20;
+            for (int i = 0; i < 2; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * 0.1f + MathUtils.random(-10, 10), velocity.y * 0.1f + MathUtils.random(-10, 10),
+                        0.4f, 1.2f, 0.2f,
+                        1.0f, 0.5f, 0, 1,
+                        1, 1, 1, 0);
+            }
+            /*----------------------------------------------------------------------*/
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
+            velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
+
+            /*------------Эффект работы двигателя при ускорении---------------*/
+            if (velocity.len() > 50.0f) {
+                float bx = position.x + MathUtils.cosDeg(angle + 180) * 20;
+                float by = position.y + MathUtils.sinDeg(angle + 180) * 20;
+                for (int i = 0; i < 3; i++) {
+                    gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                            velocity.x * -0.2f + MathUtils.random(-20, 20), velocity.y * -0.2f + MathUtils.random(-20, 20),
+                            0.5f, 1.2f, 0.2f, 1.0f, 0.5f, 0, 1, 1, 1, 1, 0
+                    );
+                }
+            }
+            /*----------------------------------------------------------------------*/
+        }
         /*------------Управление задним ходом корабля-------------------------------------*/
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             velocity.x -= MathUtils.cosDeg(angle) * enginePower / 2 * dt;
             velocity.y -= MathUtils.sinDeg(angle) * enginePower / 2 * dt;
-        }
 
-        position.mulAdd(velocity, dt);
-        hitArea.setPosition(position);
+            /*------------Эффект работы двигателя при ускорении---------------*/
+            float bx = position.x + MathUtils.cosDeg(angle + 90) * 20;
+            float by = position.y + MathUtils.sinDeg(angle + 90) * 20;
+            for (int i = 0; i < 2; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * 0.1f + MathUtils.random(-20, 20), velocity.y * 0.1f + MathUtils.random(-20, 20),
+                        0.4f, 1.2f, 0.2f,
+                        1.0f, 0.5f, 0, 1,
+                        1, 1, 1, 0);
+            }
+            bx = position.x + MathUtils.cosDeg(angle - 90) * 20;
+            by = position.y + MathUtils.sinDeg(angle - 90) * 20;
+            for (int i = 0; i < 2; i++) {
+                gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                        velocity.x * 0.1f + MathUtils.random(-20, 20), velocity.y * 0.1f + MathUtils.random(-20, 20),
+                        0.4f, 1.2f, 0.2f,
+                        1.0f, 0.5f, 0, 1,
+                        1, 1, 1, 0);
+            }
+            /*----------------------------------------------------------------------*/
+
+        }
+    }
+
+    private void updateScore(float dt) {
+        if (scoreView < score) {
+            scoreView += 2000 * dt;
+            if (scoreView > score) {
+                scoreView = score;
+            }
+        }
+    }
+
+    private void tryToFire() {
+        float wx;
+        float wy;
+        if (fireTimer > currentWeapon.getFirePeriod()) {
+            fireTimer = 0.0f;
+            currentWeapon.fire();
+//                /* Стрельба только с носа корабля
+//                wx = position.x + MathUtils.cosDeg(angle) * 20.0f;
+//                wy = position.y + MathUtils.sinDeg(angle) * 20.0f;
+//                */
+//
+//            /*---Двойная cтрельба с крыльев корабля---*/
+//            //Левое крыло
+//            wx = position.x + MathUtils.cosDeg(angle + 90) * 25.0f;
+//            wy = position.y + MathUtils.sinDeg(angle + 90) * 25.0f;
+//            gc.getBulletController().setup(wx, wy,
+//                    MathUtils.cosDeg(angle) * 500.0f + velocity.x,
+//                    MathUtils.sinDeg(angle) * 500.0f + velocity.y);
+//            //Правое крыло
+//            wx = position.x + MathUtils.cosDeg(angle - 90) * 25.0f;
+//            wy = position.y + MathUtils.sinDeg(angle - 90) * 25.0f;
+//            gc.getBulletController().setup(wx, wy,
+//                    MathUtils.cosDeg(angle) * 500.0f + velocity.x,
+//                    MathUtils.sinDeg(angle) * 500.0f + velocity.y);
+        }
+    }
+
+    private void checkSpaceBorders() {
         /*------------Определение границы экрана, чтобы корабль не улетал за его пределы.----------------*/
         if (position.x < 32) {
             position.x = 32;
