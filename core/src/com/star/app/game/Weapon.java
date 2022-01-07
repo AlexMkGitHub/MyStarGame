@@ -30,6 +30,10 @@ public class Weapon {
         return maxBullets;
     }
 
+    public void setCurBullets(int curBullets) {
+        this.curBullets = curBullets;
+    }
+
     public int getCurBullets() {
         return curBullets;
     }

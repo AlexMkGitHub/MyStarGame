@@ -5,7 +5,7 @@ import com.star.app.game.GameController;
 import com.star.app.game.WorldRenderer;
 import com.star.app.screen.utils.Assets;
 
-public class GameScreen extends AbstractScreen{
+public class GameScreen extends AbstractScreen {
     private SpriteBatch batch;
     private GameController gc;
     private WorldRenderer worldRenderer;

@@ -27,6 +27,7 @@ public class Hero {
     private int scoreView;
     private StringBuilder sb;
     private Weapon currentWeapon;
+    private int money;
 
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
@@ -37,6 +38,22 @@ public class Hero {
 
     public void setHp(int hp) {
         this.hp = hp;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public Weapon getCurrentWeapon() {
+        return currentWeapon;
+    }
+
+    public int getHpMax() {
+        return hpMax;
     }
 
     public float getAngle() {
@@ -71,7 +88,7 @@ public class Hero {
         this.hitArea = new Circle(position, BASE_RADIUS);
         this.hitArea.setRadius(BASE_RADIUS);
         this.sb = new StringBuilder();
-        this.currentWeapon = new Weapon(gc, this, "Laser", 0.1f, 1, 600f, 300,
+        this.currentWeapon = new Weapon(gc, this, "Laser", 0.1f, 1, 600f, 1300,
                 new Vector3[]{
                         new Vector3(28, 0, 0),
                         new Vector3(28, 90, 20),
@@ -84,6 +101,7 @@ public class Hero {
         sb.append("SCORE: ").append(scoreView).append("\n");
         sb.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
         sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        sb.append("MONEY: ").append(money).append("\n");
         font.draw(batch, sb, 20, 700);
     }
 

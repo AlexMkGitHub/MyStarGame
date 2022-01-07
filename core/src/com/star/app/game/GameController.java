@@ -9,11 +9,16 @@ public class GameController {
     private AsteroidController asteroidController;
     private BulletController bulletController;
     private ParticleController particleController;
+    private PowerAddController powerAddController;
     private Hero hero;
     private Vector2 tempVec;
 
     public ParticleController getParticleController() {
         return particleController;
+    }
+
+    public PowerAddController getPowerAddController() {
+        return powerAddController;
     }
 
     public AsteroidController getAsteroidController() {
@@ -33,13 +38,13 @@ public class GameController {
     }
 
     public GameController() {
+        this.powerAddController = new PowerAddController(this);
         this.background = new Background(this);
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.tempVec = new Vector2();
         this.particleController = new ParticleController();
-
         for (int i = 0; i < 3; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
@@ -55,7 +60,10 @@ public class GameController {
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
+        powerAddController.update(dt);
         checkCollisions();
+        addHeroGifts();
+        addAsteroids();
     }
 
     private void checkCollisions() {
@@ -99,4 +107,72 @@ public class GameController {
             }
         }
     }
+
+    private void addAsteroids() {
+        if (asteroidController.getActiveList().isEmpty()) {
+            asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                    MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                    MathUtils.random(-200, 200),
+                    MathUtils.random(-200, 200), 1.0f);
+        }
+    }
+
+    private void addHeroGifts() {
+        int count;
+        for (int j = 0; j < powerAddController.getActiveList().size(); j++) {
+            PowerAdd pa = powerAddController.getActiveList().get(j);
+            int rnd = pa.getRndPower();
+            if (pa.getHitArea().overlaps(hero.getHitArea())) {
+                switch (rnd) {
+                    case 1:
+                        int ammoAddCount = powerAddController.getActiveList().get(j).getCount();
+                        count = hero.getCurrentWeapon().getCurBullets() + ammoAddCount;
+                        if (count > hero.getCurrentWeapon().getMaxBullets()) {
+                            hero.getCurrentWeapon().setCurBullets(hero.getCurrentWeapon().getMaxBullets());
+                        } else {
+                            hero.getCurrentWeapon().setCurBullets(count);
+                        }
+                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
+                                pa.getVelocity().x, pa.getVelocity().y,
+                                0.1f, 3.2f, 7.2f,
+                                1.0f, 1.0f, 1.0f, 1,
+                                1.0f, 1.0f, 0.0f, 0.5f);
+                        pa.deactivate();
+                        powerAddController.getActiveList().remove(j);
+                        break;
+
+                    case 2:
+                        int aidKit = powerAddController.getActiveList().get(j).getCount();
+                        count = hero.getHp() + aidKit;
+                        if (count > hero.getHpMax()) {
+                            hero.setHp(getHero().getHpMax());
+                        } else {
+                            hero.setHp(count);
+                        }
+                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
+                                pa.getVelocity().x, pa.getVelocity().y,
+                                0.1f, 3.2f, 7.2f,
+                                1.0f, 1.0f, 1.0f, 1,
+                                1.0f, 1.0f, 0.0f, 0.5f);
+                        pa.deactivate();
+                        powerAddController.getActiveList().remove(j);
+                        break;
+
+                    case 3:
+                        int moneyCount = powerAddController.getActiveList().get(j).getCount();
+                        count = hero.getMoney() + moneyCount;
+                        hero.setMoney(count);
+                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
+                                pa.getVelocity().x, pa.getVelocity().y,
+                                0.1f, 3.2f, 7.2f,
+                                1.0f, 1.0f, 1.0f, 1,
+                                1.0f, 1.0f, 0.0f, 0.5f);
+                        pa.deactivate();
+                        powerAddController.getActiveList().remove(j);
+                        break;
+                }
+            }
+        }
+    }
 }
+
