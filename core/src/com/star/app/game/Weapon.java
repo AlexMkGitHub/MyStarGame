@@ -62,6 +62,14 @@ public class Weapon {
                 vy = hero.getVelocity().y + bulletSpeed * MathUtils.sinDeg(hero.getAngle() + slots[i].z);
                 gc.getBulletController().setup(x, y, vx, vy);
             }
+
+        }
+    }
+
+    public void addAmmos(int amount) {
+        curBullets += amount;
+        if (curBullets > maxBullets) {
+            curBullets = maxBullets;
         }
     }
 

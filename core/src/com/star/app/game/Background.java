@@ -42,7 +42,7 @@ public class Background {
     public Background(GameController gc) {
         this.gc = gc;
         //this.textureCosmos = new Texture("images/space3.png");
-        this.textureCosmos = new Texture("images/space.jpg");
+        this.textureCosmos = new Texture("images/bg.png");
         this.textureStar = Assets.getInstance().getAtlas().findRegion("star16");
         this.stars = new Star[STAR_COUNT];
         for (int i = 0; i < stars.length; i++) {

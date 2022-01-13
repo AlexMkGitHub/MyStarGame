@@ -2,15 +2,17 @@ package com.star.app.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 public class PowerAdd implements Poolable {
     private GameController gc;
-    private Texture texture;
+    private TextureRegion texture;
     private Vector2 position;
     private Vector2 velocity;
     private boolean active;
@@ -64,17 +66,20 @@ public class PowerAdd implements Poolable {
             switch (rndPower) {
                 case 1:
                     this.title = "Ammo";
-                    this.texture = new Texture("images/ammo.png");
+                    //this.texture = new Texture("images/ammo.png");
+                    this.texture = Assets.getInstance().getAtlas().findRegion("ammo");
                     this.count = 50;
                     break;
                 case 2:
                     this.title = "First Aid Kit";
-                    this.texture = new Texture("images/aidkit.png");
+                    //this.texture = new Texture("images/aidkit.png");
+                    this.texture = Assets.getInstance().getAtlas().findRegion("aidkit");
                     this.count = 20;
                     break;
                 case 3:
                     this.title = "Money";
-                    this.texture = new Texture("images/money.png");
+                    //this.texture = new Texture("images/money.png");
+                    this.texture = Assets.getInstance().getAtlas().findRegion("money");
                     this.count = 5;
                     break;
             }
@@ -84,7 +89,7 @@ public class PowerAdd implements Poolable {
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x - 32, position.y - 32, 32, 32,
                 64, 64, scale, scale,
-                0, 0, 0, 64, 64, false, false);
+                0);
     }
 
     public void deactivate() {

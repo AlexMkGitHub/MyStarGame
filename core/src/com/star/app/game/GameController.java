@@ -9,7 +9,8 @@ public class GameController {
     private AsteroidController asteroidController;
     private BulletController bulletController;
     private ParticleController particleController;
-    private PowerAddController powerAddController;
+    //private PowerAddController powerAddController;
+    private PowerUpsController powerUpsController;
     private Hero hero;
     private Vector2 tempVec;
 
@@ -17,8 +18,13 @@ public class GameController {
         return particleController;
     }
 
-    public PowerAddController getPowerAddController() {
-        return powerAddController;
+//    public PowerAddController getPowerAddController() {
+//        return powerAddController;
+//    }
+
+
+    public PowerUpsController getPowerUpsController() {
+        return powerUpsController;
     }
 
     public AsteroidController getAsteroidController() {
@@ -38,7 +44,8 @@ public class GameController {
     }
 
     public GameController() {
-        this.powerAddController = new PowerAddController(this);
+//        this.powerAddController = new PowerAddController(this);
+        this.powerUpsController = new PowerUpsController(this);
         this.background = new Background(this);
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
@@ -56,25 +63,29 @@ public class GameController {
 
     public void update(float dt) {
         background.update(dt);
-        hero.update(dt);
         asteroidController.update(dt);
+        hero.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
-        powerAddController.update(dt);
+        //     powerAddController.update(dt);
+        powerUpsController.update(dt);
         checkCollisions();
-        addHeroGifts();
+//        addHeroGifts();
         addAsteroids();
     }
+
 
     private void checkCollisions() {
         for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
             Asteroid a = asteroidController.getActiveList().get(j);
             if (a.getHitArea().overlaps(hero.getHitArea())) {
                 float dst = a.getPosition().dst(hero.getPosition());
+
                 float halfOverLen = (a.getHitArea().radius + hero.getHitArea().radius - dst) / 2;
                 tempVec.set(hero.getPosition()).sub(a.getPosition()).nor();
                 hero.getPosition().mulAdd(tempVec, halfOverLen);
                 a.getPosition().mulAdd(tempVec, -halfOverLen);
+
                 float sumScl = hero.getHitArea().radius + a.getHitArea().radius;
                 hero.getVelocity().mulAdd(tempVec, a.getHitArea().radius / sumScl * 100);
                 a.getVelocity().mulAdd(tempVec, -hero.getHitArea().radius / sumScl * 100);
@@ -99,11 +110,22 @@ public class GameController {
 
 
                     b.deactivate();
-                    if (a.takeDamage(1)) {
+                    if (a.takeDamage(hero.getCurrentWeapon().getDamage())) {
+                        for (int k = 0; k < 3; k++) {
+                            powerUpsController.setup(a.getPosition().x, a.getPosition().y, a.getScale() * 0.25f);
+                        }
                         hero.addScore(a.getHpMax() * 100);
                     }
                     break;
                 }
+            }
+        }
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            if (hero.getHitArea().contains(p.getPosition())) {
+                hero.consume(p);
+                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y);
+                p.deactivate();
             }
         }
     }
@@ -117,62 +139,62 @@ public class GameController {
         }
     }
 
-    private void addHeroGifts() {
-        int count;
-        for (int j = 0; j < powerAddController.getActiveList().size(); j++) {
-            PowerAdd pa = powerAddController.getActiveList().get(j);
-            int rnd = pa.getRndPower();
-            if (pa.getHitArea().overlaps(hero.getHitArea())) {
-                switch (rnd) {
-                    case 1:
-                        int ammoAddCount = powerAddController.getActiveList().get(j).getCount();
-                        count = hero.getCurrentWeapon().getCurBullets() + ammoAddCount;
-                        if (count > hero.getCurrentWeapon().getMaxBullets()) {
-                            hero.getCurrentWeapon().setCurBullets(hero.getCurrentWeapon().getMaxBullets());
-                        } else {
-                            hero.getCurrentWeapon().setCurBullets(count);
-                        }
-                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
-                                pa.getVelocity().x, pa.getVelocity().y,
-                                0.1f, 3.2f, 7.2f,
-                                1.0f, 1.0f, 1.0f, 1,
-                                1.0f, 1.0f, 0.0f, 0.5f);
-                        pa.deactivate();
-                        powerAddController.getActiveList().remove(j);
-                        break;
-
-                    case 2:
-                        int aidKit = powerAddController.getActiveList().get(j).getCount();
-                        count = hero.getHp() + aidKit;
-                        if (count > hero.getHpMax()) {
-                            hero.setHp(getHero().getHpMax());
-                        } else {
-                            hero.setHp(count);
-                        }
-                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
-                                pa.getVelocity().x, pa.getVelocity().y,
-                                0.1f, 3.2f, 7.2f,
-                                1.0f, 1.0f, 1.0f, 1,
-                                1.0f, 1.0f, 0.0f, 0.5f);
-                        pa.deactivate();
-                        powerAddController.getActiveList().remove(j);
-                        break;
-
-                    case 3:
-                        int moneyCount = powerAddController.getActiveList().get(j).getCount();
-                        count = hero.getMoney() + moneyCount;
-                        hero.setMoney(count);
-                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
-                                pa.getVelocity().x, pa.getVelocity().y,
-                                0.1f, 3.2f, 7.2f,
-                                1.0f, 1.0f, 1.0f, 1,
-                                1.0f, 1.0f, 0.0f, 0.5f);
-                        pa.deactivate();
-                        powerAddController.getActiveList().remove(j);
-                        break;
-                }
-            }
-        }
-    }
+//    private void addHeroGifts() {
+//        int count;
+//        for (int j = 0; j < powerAddController.getActiveList().size(); j++) {
+//            PowerAdd pa = powerAddController.getActiveList().get(j);
+//            int rnd = pa.getRndPower();
+//            if (pa.getHitArea().overlaps(hero.getHitArea())) {
+//                switch (rnd) {
+//                    case 1:
+//                        int ammoAddCount = powerAddController.getActiveList().get(j).getCount();
+//                        count = hero.getCurrentWeapon().getCurBullets() + ammoAddCount;
+//                        if (count > hero.getCurrentWeapon().getMaxBullets()) {
+//                            hero.getCurrentWeapon().setCurBullets(hero.getCurrentWeapon().getMaxBullets());
+//                        } else {
+//                            hero.getCurrentWeapon().setCurBullets(count);
+//                        }
+//                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
+//                                pa.getVelocity().x, pa.getVelocity().y,
+//                                0.1f, 3.2f, 7.2f,
+//                                1.0f, 1.0f, 1.0f, 1,
+//                                1.0f, 1.0f, 0.0f, 0.5f);
+//                        pa.deactivate();
+//                        powerAddController.getActiveList().remove(j);
+//                        break;
+//
+//                    case 2:
+//                        int aidKit = powerAddController.getActiveList().get(j).getCount();
+//                        count = hero.getHp() + aidKit;
+//                        if (count > hero.getHpMax()) {
+//                            hero.setHp(getHero().getHpMax());
+//                        } else {
+//                            hero.setHp(count);
+//                        }
+//                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
+//                                pa.getVelocity().x, pa.getVelocity().y,
+//                                0.1f, 3.2f, 7.2f,
+//                                1.0f, 1.0f, 1.0f, 1,
+//                                1.0f, 1.0f, 0.0f, 0.5f);
+//                        pa.deactivate();
+//                        powerAddController.getActiveList().remove(j);
+//                        break;
+//
+//                    case 3:
+//                        int moneyCount = powerAddController.getActiveList().get(j).getCount();
+//                        count = hero.getMoney() + moneyCount;
+//                        hero.setMoney(count);
+//                        particleController.setup(pa.getPosition().x, pa.getPosition().y,
+//                                pa.getVelocity().x, pa.getVelocity().y,
+//                                0.1f, 3.2f, 7.2f,
+//                                1.0f, 1.0f, 1.0f, 1,
+//                                1.0f, 1.0f, 0.0f, 0.5f);
+//                        pa.deactivate();
+//                        powerAddController.getActiveList().remove(j);
+//                        break;
+//                }
+//            }
+//        }
+//    }
 }
 

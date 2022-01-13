@@ -28,6 +28,7 @@ public class Hero {
     private StringBuilder sb;
     private Weapon currentWeapon;
     private int money;
+    private boolean pause;
 
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
@@ -72,11 +73,16 @@ public class Hero {
         return position;
     }
 
+    public boolean isPause() {
+        return pause;
+    }
+
     public void addScore(int amount) {
         score += amount;
     }
 
     public Hero(GameController gc) {
+        this.pause = false;
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
         this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
@@ -209,6 +215,21 @@ public class Hero {
         }
     }
 
+    public void consume(PowerUp p) {
+        switch (p.getType()) {
+            case MEDKIT:
+                hp += p.getPower();
+                break;
+            case MONEY:
+                money += p.getPower();
+                break;
+            case AMMOS:
+                currentWeapon.addAmmos(p.getPower());
+                break;
+
+        }
+    }
+
     private void updateScore(float dt) {
         if (scoreView < score) {
             scoreView += 2000 * dt;
@@ -281,6 +302,8 @@ public class Hero {
 //            }
 //        }
     }
+
+
 }
 
 
