@@ -62,16 +62,19 @@ public class GameController {
     }
 
     public void update(float dt) {
-        background.update(dt);
-        asteroidController.update(dt);
-        hero.update(dt);
-        bulletController.update(dt);
-        particleController.update(dt);
-        //     powerAddController.update(dt);
-        powerUpsController.update(dt);
-        checkCollisions();
+        hero.gamePause();
+        if (!hero.isPause()) {
+            background.update(dt);
+            asteroidController.update(dt);
+            hero.update(dt);
+            bulletController.update(dt);
+            particleController.update(dt);
+            //     powerAddController.update(dt);
+            powerUpsController.update(dt);
+            checkCollisions();
 //        addHeroGifts();
-        addAsteroids();
+            addAsteroids();
+        }
     }
 
 

@@ -2,9 +2,12 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -136,6 +139,7 @@ public class Hero {
     }
 
     private void boardControl(float dt) {
+
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             tryToFire();
         }
@@ -211,6 +215,19 @@ public class Hero {
                         1, 1, 1, 0);
             }
             /*----------------------------------------------------------------------*/
+
+        }
+    }
+
+    public void gamePause() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (pause) {
+                pause = false;
+                return;
+            }
+            pause = true;
+            Gdx.gl.glClearColor(0f, 0f, 0f, 0.5f);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         }
     }
