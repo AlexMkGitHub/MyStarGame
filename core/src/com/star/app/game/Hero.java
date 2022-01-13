@@ -2,12 +2,10 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -28,9 +26,11 @@ public class Hero {
     private float fireTimer;
     private int score;
     private int scoreView;
+    public static int scorePublic;
     private StringBuilder sb;
     private Weapon currentWeapon;
     private int money;
+    public static int moneyPublic;
     private boolean pause;
 
     private final float BASE_SIZE = 64;
@@ -38,6 +38,10 @@ public class Hero {
 
     public int getHp() {
         return hp;
+    }
+
+    public void setTexture(TextureRegion texture) {
+        this.texture = texture;
     }
 
     public void setHp(int hp) {
@@ -112,6 +116,8 @@ public class Hero {
         sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
         sb.append("MONEY: ").append(money).append("\n");
         font.draw(batch, sb, 20, 700);
+        moneyPublic = money;
+        scorePublic = scoreView;
     }
 
     public void render(SpriteBatch batch) {
@@ -121,6 +127,11 @@ public class Hero {
 
     public void takeDamage(int amount) {
         hp -= amount;
+        if (hp <= 90) {
+            //gc.getParticleController().getEffectBuilder().takePowerUpEffect(position.x, position.y);
+            //ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
+
+        }
     }
 
     public void update(float dt) {
@@ -190,6 +201,7 @@ public class Hero {
             }
             /*----------------------------------------------------------------------*/
         }
+
         /*------------Управление задним ходом корабля-------------------------------------*/
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             velocity.x -= MathUtils.cosDeg(angle) * enginePower / 2 * dt;
@@ -228,7 +240,6 @@ public class Hero {
             pause = true;
             Gdx.gl.glClearColor(0f, 0f, 0f, 0.5f);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         }
     }
 
@@ -319,7 +330,6 @@ public class Hero {
 //            }
 //        }
     }
-
 
 }
 

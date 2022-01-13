@@ -3,6 +3,7 @@ package com.star.app.game;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 public class GameController {
     private Background background;
@@ -97,6 +98,12 @@ public class GameController {
                     hero.addScore(a.getHpMax() * 50);
                 }
                 hero.takeDamage(2);
+                if (hero.getHp() <= 90) {
+                    hero.setTexture(Assets.getInstance().getAtlas().findRegion("bullet"));
+                    getParticleController().getEffectBuilder().shipDestroy(hero.getPosition().x, hero.getPosition().y);
+
+                    ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
+                }
             }
         }
         for (int i = 0; i < bulletController.getActiveList().size(); i++) {
