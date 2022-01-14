@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class GameController {
     private Background background;
     private AsteroidController asteroidController;
@@ -14,6 +17,7 @@ public class GameController {
     private PowerUpsController powerUpsController;
     private Hero hero;
     private Vector2 tempVec;
+    private boolean crashHero;
 
     public ParticleController getParticleController() {
         return particleController;
@@ -46,6 +50,7 @@ public class GameController {
 
     public GameController() {
 //        this.powerAddController = new PowerAddController(this);
+        this.crashHero = false;
         this.powerUpsController = new PowerUpsController(this);
         this.background = new Background(this);
         this.hero = new Hero(this);
@@ -59,7 +64,6 @@ public class GameController {
                     MathUtils.random(-200, 200),
                     MathUtils.random(-200, 200), 1.0f);
         }
-
     }
 
     public void update(float dt) {
@@ -80,6 +84,10 @@ public class GameController {
 
 
     private void checkCollisions() {
+        if (crashHero) {
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
+        }
+
         for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
             Asteroid a = asteroidController.getActiveList().get(j);
             if (a.getHitArea().overlaps(hero.getHitArea())) {
@@ -98,14 +106,25 @@ public class GameController {
                     hero.addScore(a.getHpMax() * 50);
                 }
                 hero.takeDamage(2);
-                if (hero.getHp() <= 90) {
-                    hero.setTexture(Assets.getInstance().getAtlas().findRegion("bullet"));
+                if (hero.getHp() <= 0) {
+                    hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
                     getParticleController().getEffectBuilder().shipDestroy(hero.getPosition().x, hero.getPosition().y);
+                    tempVec.set(-1256.0f, -1256.0f);
+                    hero.getPosition().mulAdd(tempVec, 0);
 
-                    ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            crashHero = true;
+                        }
+                    };
+                    Timer timer = new Timer();
+                    long delay = 2000;
+                    timer.schedule(task, delay);
                 }
             }
         }
+
         for (int i = 0; i < bulletController.getActiveList().size(); i++) {
             Bullet b = bulletController.getActiveList().get(i);
             for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
@@ -118,7 +137,6 @@ public class GameController {
                             1.0f, 1.0f, 1.0f, 1,
                             0.0f, 0.0f, 1.0f, 0.5f);
 
-
                     b.deactivate();
                     if (a.takeDamage(hero.getCurrentWeapon().getDamage())) {
                         for (int k = 0; k < 3; k++) {
@@ -130,6 +148,7 @@ public class GameController {
                 }
             }
         }
+
         for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
             PowerUp p = powerUpsController.getActiveList().get(i);
             if (hero.getHitArea().contains(p.getPosition())) {
