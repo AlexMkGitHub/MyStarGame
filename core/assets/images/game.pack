@@ -3,31 +3,87 @@ images1.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-asteroid
+boom
   rotate: false
   xy: 2, 2
+  size: 835, 735
+  orig: 835, 735
+  offset: 0, 0
+  index: -1
+asteroid
+  rotate: false
+  xy: 2, 739
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
+powerups
+  rotate: false
+  xy: 260, 739
+  size: 360, 240
+  orig: 360, 240
+  offset: 0, 0
+  index: -1
+simpleButton
+  rotate: false
+  xy: 622, 739
+  size: 320, 80
+  orig: 320, 80
+  offset: 0, 0
+  index: -1
 ship
   rotate: false
-  xy: 260, 2
+  xy: 839, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
+money
+  rotate: false
+  xy: 905, 2
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+ammo
+  rotate: false
+  xy: 839, 68
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+aidkit
+  rotate: false
+  xy: 905, 68
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+smButton
+  rotate: false
+  xy: 839, 134
+  size: 120, 32
+  orig: 120, 32
+  offset: 0, 0
+  index: -1
 bullet
   rotate: false
-  xy: 326, 2
+  xy: 971, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star16
   rotate: false
-  xy: 326, 36
+  xy: 1005, 2
   size: 16, 16
   orig: 16, 16
+  offset: 0, 0
+  index: -1
+mini
+  rotate: false
+  xy: 1005, 20
+  size: 2, 2
+  orig: 2, 2
   offset: 0, 0
   index: -1
