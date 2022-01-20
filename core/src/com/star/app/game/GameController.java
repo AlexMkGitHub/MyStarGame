@@ -60,7 +60,7 @@ public class GameController {
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.tempVec = new Vector2();
-        this.asteroidScale = 0.3f;
+        this.asteroidScale = 1.0f;
         this.particleController = new ParticleController();
         for (int i = 0; i < 3; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
@@ -159,6 +159,16 @@ public class GameController {
                 hero.consume(p);
                 particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y);
                 p.deactivate();
+            }
+        }
+
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            if (p.getHitArea().overlaps(hero.getMagneticHitArea())) {
+                float dst = p.getPosition().dst(hero.getPosition());
+                float halfOverLen = (p.getHitArea().radius + hero.getMagneticHitArea().radius - dst) / 2;
+                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getPosition().mulAdd(tempVec, halfOverLen);
             }
         }
     }
