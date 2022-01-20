@@ -153,6 +153,14 @@ public class GameController {
             }
         }
 
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            if (hero.getHitArea().contains(p.getPosition())) {
+                hero.consume(p);
+                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y);
+                p.deactivate();
+            }
+        }
     }
 
     private void addAsteroids() {
@@ -165,7 +173,6 @@ public class GameController {
                         MathUtils.random(-200, 200), asteroidScale * level);
             }
         }
-
     }
 
 //    private void addHeroGifts() {
