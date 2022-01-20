@@ -23,6 +23,8 @@ public class Hero {
     private int hpMax;
     private int hp;
     private Circle hitArea;
+    private Circle magneticHitArea;
+
     private float fireTimer;
     private int score;
     private int scoreView;
@@ -35,6 +37,7 @@ public class Hero {
 
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
+    private final float MAGNETIC_RADIUS = 100;
 
     public int getHp() {
         return hp;
@@ -72,6 +75,10 @@ public class Hero {
         return hitArea;
     }
 
+    public Circle getMagneticHitArea() {
+        return magneticHitArea;
+    }
+
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -99,6 +106,7 @@ public class Hero {
         this.hpMax = 100;
         this.hp = hpMax;
         this.hitArea = new Circle(position, BASE_RADIUS);
+        this.magneticHitArea = new Circle(position, MAGNETIC_RADIUS);
         this.hitArea.setRadius(BASE_RADIUS);
         this.sb = new StringBuilder();
         this.currentWeapon = new Weapon(gc, this, "Laser", 0.1f, 1, 600f, 1300,
@@ -125,7 +133,7 @@ public class Hero {
                 1, angle);
     }
 
-    public void takeDamage(int amount) {
+    public void takeDamage(float amount) {
         hp -= amount;
         if (hp <= 90) {
             //gc.getParticleController().getEffectBuilder().takePowerUpEffect(position.x, position.y);
@@ -140,6 +148,7 @@ public class Hero {
         boardControl(dt);
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
+        magneticHitArea.setPosition(position);
         float stopKoef = 1.0f - 0.8f * dt;
         if (stopKoef < 0.0f) {
             stopKoef = 0.0f;
