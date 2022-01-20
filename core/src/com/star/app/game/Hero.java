@@ -37,7 +37,7 @@ public class Hero {
 
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
-    private final float MAGNETIC_RADIUS = 100;
+    private final float MAGNETIC_RADIUS = 200;
 
     public int getHp() {
         return hp;

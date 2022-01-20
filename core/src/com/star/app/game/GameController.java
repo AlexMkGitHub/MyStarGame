@@ -166,7 +166,7 @@ public class GameController {
             PowerUp p = powerUpsController.getActiveList().get(i);
             if (p.getHitArea().overlaps(hero.getMagneticHitArea())) {
                 float dst = p.getPosition().dst(hero.getPosition());
-                float halfOverLen = (p.getHitArea().radius + hero.getMagneticHitArea().radius - dst) / 2;
+                float halfOverLen = (p.getHitArea().radius + hero.getMagneticHitArea().radius - dst) / 100;
                 tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
                 p.getPosition().mulAdd(tempVec, halfOverLen);
             }
