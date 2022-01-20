@@ -18,6 +18,8 @@ public class GameController {
     private Hero hero;
     private Vector2 tempVec;
     private boolean crashHero;
+    private float level;
+    private float asteroidScale;
 
     public ParticleController getParticleController() {
         return particleController;
@@ -50,6 +52,7 @@ public class GameController {
 
     public GameController() {
 //        this.powerAddController = new PowerAddController(this);
+        this.level = 1.0f;
         this.crashHero = false;
         this.powerUpsController = new PowerUpsController(this);
         this.background = new Background(this);
@@ -57,12 +60,13 @@ public class GameController {
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.tempVec = new Vector2();
+        this.asteroidScale = 0.3f;
         this.particleController = new ParticleController();
         for (int i = 0; i < 3; i++) {
             asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                     MathUtils.random(-200, 200),
-                    MathUtils.random(-200, 200), 1.0f);
+                    MathUtils.random(-200, 200), asteroidScale * level);
         }
     }
 
@@ -105,7 +109,7 @@ public class GameController {
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 50);
                 }
-                hero.takeDamage(2);
+                hero.takeDamage(2 * level);
                 if (hero.getHp() <= 0) {
                     hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
                     getParticleController().getEffectBuilder().shipDestroy(hero.getPosition().x, hero.getPosition().y);
@@ -149,23 +153,19 @@ public class GameController {
             }
         }
 
-        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
-            PowerUp p = powerUpsController.getActiveList().get(i);
-            if (hero.getHitArea().contains(p.getPosition())) {
-                hero.consume(p);
-                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y);
-                p.deactivate();
-            }
-        }
     }
 
     private void addAsteroids() {
         if (asteroidController.getActiveList().isEmpty()) {
-            asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
-                    MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                    MathUtils.random(-200, 200),
-                    MathUtils.random(-200, 200), 1.0f);
+            level++;
+            for (int i = 0; i < 2; i++) {
+                asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                        MathUtils.random(-200, 200),
+                        MathUtils.random(-200, 200), asteroidScale * level);
+            }
         }
+
     }
 
 //    private void addHeroGifts() {
