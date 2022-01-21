@@ -52,7 +52,7 @@ public class GameController {
 
     public GameController() {
 //        this.powerAddController = new PowerAddController(this);
-        this.level = 1.0f;
+        this.level = 0.0f;
         this.crashHero = false;
         this.powerUpsController = new PowerUpsController(this);
         this.background = new Background(this);
@@ -175,12 +175,16 @@ public class GameController {
 
     private void addAsteroids() {
         if (asteroidController.getActiveList().isEmpty()) {
-            level++;
-            for (int i = 0; i < 2; i++) {
+            level += 0.5f;
+            for (int i = 0; i < 3; i++) {
+                float sizeAsteroid = level;
+                if (sizeAsteroid > 1.5f) {
+                    sizeAsteroid = 1.5f;
+                }
                 asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                         MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                         MathUtils.random(-200, 200),
-                        MathUtils.random(-200, 200), asteroidScale * level);
+                        MathUtils.random(-200, 200), asteroidScale * sizeAsteroid);
             }
         }
     }
@@ -243,4 +247,5 @@ public class GameController {
 //        }
 //    }
 }
+
 
