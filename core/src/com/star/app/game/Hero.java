@@ -2,7 +2,6 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +13,22 @@ import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
 public class Hero {
+    public enum Skill {
+        HP_MAX(20, 10), HP(20, 10), WEAPON(100, 1), MAGNET(50, 20);
+
+        int cost;
+        int power;
+
+        Skill(int cost) {
+            this.cost = cost;
+        }
+
+        Skill(int cost, int power) {
+            this.cost = cost;
+            this.power = power;
+        }
+    }
+
     private GameController gc;
     private TextureRegion texture;
     private Vector2 position;
@@ -24,20 +39,32 @@ public class Hero {
     private int hp;
     private Circle hitArea;
     private Circle magneticHitArea;
-
     private float fireTimer;
     private int score;
     private int scoreView;
-    public static int scorePublic;
     private StringBuilder sb;
     private Weapon currentWeapon;
     private int money;
-    public static int moneyPublic;
-    private boolean pause;
+    private Shop shop;
+    private Weapon[] weapons;
+    private int weaponNum;
+
+    /*-----------Моя реализация паузы в игре-----------*/
+    //    public static int scorePublic;
+    //    public static int moneyPublic;
+    //    private boolean pause;
 
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
-    private final float MAGNETIC_RADIUS = 200;
+    private float magneticRadius = 0;
+
+    public int getScore() {
+        return score;
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
 
     public int getHp() {
         return hp;
@@ -87,16 +114,31 @@ public class Hero {
         return position;
     }
 
-    public boolean isPause() {
-        return pause;
-    }
+    /*-----------Моя реализация паузы в игре-----------*/
+//    public boolean isPause() {
+//        return pause;
+//    }
 
     public void addScore(int amount) {
         score += amount;
     }
 
+    public boolean isAlive() {
+        return hp > 0;
+    }
+
+    public boolean isMoneyEnough(int amount) {
+        return money >= amount;
+    }
+
+    public void decreaseMoney(int amount) {
+        money -= amount;
+    }
+
     public Hero(GameController gc) {
-        this.pause = false;
+        /*-----------Моя реализация паузы в игре-----------*/
+//        this.pause = false;
+
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
         this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
@@ -106,15 +148,15 @@ public class Hero {
         this.hpMax = 100;
         this.hp = hpMax;
         this.hitArea = new Circle(position, BASE_RADIUS);
-        this.magneticHitArea = new Circle(position, MAGNETIC_RADIUS);
+        this.magneticHitArea = new Circle(position, magneticRadius);
         this.hitArea.setRadius(BASE_RADIUS);
         this.sb = new StringBuilder();
-        this.currentWeapon = new Weapon(gc, this, "Laser", 0.1f, 1, 600f, 1300,
-                new Vector3[]{
-                        new Vector3(28, 0, 0),
-                        new Vector3(28, 90, 20),
-                        new Vector3(28, -90, -20),
-                });
+        this.shop = new Shop(this);
+        this.money = 1500;
+        this.weaponNum = 0;
+        createWeapons();
+
+        this.currentWeapon = weapons[weaponNum];
     }
 
     public void renderGUI(SpriteBatch batch, BitmapFont font) {
@@ -124,8 +166,10 @@ public class Hero {
         sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
         sb.append("MONEY: ").append(money).append("\n");
         font.draw(batch, sb, 20, 700);
-        moneyPublic = money;
-        scorePublic = scoreView;
+
+        /*-----------Моя реализация паузы в игре-----------*/
+//        moneyPublic = money;
+//        scorePublic = scoreView;
     }
 
     public void render(SpriteBatch batch) {
@@ -135,10 +179,7 @@ public class Hero {
 
     public void takeDamage(float amount) {
         hp -= amount;
-        if (hp <= 90) {
-            //gc.getParticleController().getEffectBuilder().takePowerUpEffect(position.x, position.y);
-            //ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
-
+        if (hp <= 0) {
         }
     }
 
@@ -238,24 +279,64 @@ public class Hero {
             /*----------------------------------------------------------------------*/
 
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+            shop.setVisible(true);
+        }
     }
 
-    public void gamePause() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (pause) {
-                pause = false;
-                return;
-            }
-            pause = true;
-            Gdx.gl.glClearColor(0f, 0f, 0f, 0.5f);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    /*-----------Моя реализация паузы в игре-----------*/
+//    public void gamePause() {
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+//            if (pause) {
+//                pause = false;
+//                return;
+//            }
+//            pause = true;
+//            Gdx.gl.glClearColor(0f, 0f, 0f, 0.5f);
+//            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        }
+//    }
+
+    public boolean upgrade(Skill skill) {
+        switch (skill) {
+            case HP_MAX:
+                hpMax += Skill.HP_MAX.power;
+                return true;
+
+            case HP:
+                if (hp < hpMax) {
+                    hp += Skill.HP.power;
+                    if (hp > hpMax) {
+                        hp = hpMax;
+                        return true;
+                    }
+                }
+                break;
+
+            case WEAPON:
+                if (weaponNum < weapons.length - 1) {
+                    weaponNum++;
+                    currentWeapon = weapons[weaponNum];
+                    return true;
+                }
+                break;
+
+            case MAGNET:
+                magneticHitArea.setRadius(magneticRadius += 25);
+                return true;
+
         }
+        return false;
     }
 
     public void consume(PowerUp p) {
         switch (p.getType()) {
             case MEDKIT:
                 hp += p.getPower();
+                if (hp > hpMax) {
+                    hp = hpMax;
+                }
                 break;
             case MONEY:
                 money += p.getPower();
@@ -263,7 +344,6 @@ public class Hero {
             case AMMOS:
                 currentWeapon.addAmmos(p.getPower());
                 break;
-
         }
     }
 
@@ -282,6 +362,7 @@ public class Hero {
         if (fireTimer > currentWeapon.getFirePeriod()) {
             fireTimer = 0.0f;
             currentWeapon.fire();
+
 //                /* Стрельба только с носа корабля
 //                wx = position.x + MathUtils.cosDeg(angle) * 20.0f;
 //                wy = position.y + MathUtils.sinDeg(angle) * 20.0f;
@@ -338,6 +419,43 @@ public class Hero {
 //                position.y = -32;
 //            }
 //        }
+    }
+
+    private void createWeapons() {
+        weapons = new Weapon[]{
+                new Weapon(gc, this, "Laser", 0.2f, 1, 300f, 300,
+                        new Vector3[]{
+                                new Vector3(28, 90, 0),
+                                new Vector3(28, -90, 0),
+                        }),
+                new Weapon(gc, this, "Laser", 0.2f, 1, 600f, 500,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, 90, 20),
+                                new Vector3(28, -90, -20),
+                        }),
+                new Weapon(gc, this, "Laser", 0.1f, 1, 600f, 1000,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, 90, 20),
+                                new Vector3(28, -90, -20),
+                        }),
+                new Weapon(gc, this, "Laser", 0.1f, 2, 600f, 1000,
+                        new Vector3[]{
+                                new Vector3(28, 90, 0),
+                                new Vector3(28, -90, 0),
+                                new Vector3(28, 90, 15),
+                                new Vector3(28, -90, -15),
+                        }),
+                new Weapon(gc, this, "Laser", 0.1f, 3, 600f, 1500,
+                        new Vector3[]{
+                                new Vector3(28, 0, 0),
+                                new Vector3(28, 90, 10),
+                                new Vector3(28, 90, 20),
+                                new Vector3(28, -90, -10),
+                                new Vector3(28, -90, -20),
+                        }),
+        };
     }
 
 }
