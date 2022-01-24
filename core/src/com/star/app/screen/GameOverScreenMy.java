@@ -1,7 +1,6 @@
 package com.star.app.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,26 +11,30 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.star.app.game.Background;
+import com.star.app.game.GameController;
+import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 
 
-public class MenuScreen extends AbstractScreen {
-    private Background background;
-    private BitmapFont font72;
+public class GameOverScreenMy extends AbstractScreen {
+    private BitmapFont font84;
     private BitmapFont font24;
+    private BitmapFont font32;
+    private GameController gc;
+
+
     private Stage stage;
 
-    public MenuScreen(SpriteBatch batch) {
+    public GameOverScreenMy(SpriteBatch batch) {
         super(batch);
     }
 
     @Override
     public void show() {
-        this.background = new Background(null);
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
-        this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf");
+        this.font84 = Assets.getInstance().getAssetManager().get("fonts/font84.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
+        this.font32 = Assets.getInstance().getAssetManager().get("fonts/font32.ttf");
 
         Gdx.input.setInputProcessor(stage);
 
@@ -70,7 +73,6 @@ public class MenuScreen extends AbstractScreen {
     }
 
     public void update(float dt) {
-        background.update(dt);
         stage.act(dt);
     }
 
@@ -79,15 +81,18 @@ public class MenuScreen extends AbstractScreen {
         update(delta);
         ScreenUtils.clear(0.0f, 0.0f, 0.0f, 1);
         batch.begin();
-        background.render(batch);
-        font72.draw(batch, "Star Game 2022", 0, 600, 1280, Align.center, false);
+        font84.draw(batch, "Game over!!!", 0, 600, 1280, Align.center, false);
+
+        /*-----------Моя реализация паузы в игре-----------*/
+//        font32.draw(batch, "You score: " + Hero.scorePublic, 0, 450, 1280, Align.center, false);
+//        font32.draw(batch, "You money: " + Hero.moneyPublic, 0, 400, 1280, Align.center, false);
+
         batch.end();
         stage.draw();
     }
 
     @Override
     public void dispose() {
-        background.dispose();
         stage.dispose();
     }
 }

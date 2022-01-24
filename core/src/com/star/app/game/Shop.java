@@ -49,6 +49,7 @@ public class Shop extends Group {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 thisShop.setVisible(false);
+                hero.setPause(false);
             }
         });
 

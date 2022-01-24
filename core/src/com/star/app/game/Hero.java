@@ -48,6 +48,7 @@ public class Hero {
     private Shop shop;
     private Weapon[] weapons;
     private int weaponNum;
+    private ParticleController particleController;
 
     /*-----------Моя реализация паузы в игре-----------*/
     //    public static int scorePublic;
@@ -154,6 +155,7 @@ public class Hero {
         this.shop = new Shop(this);
         this.money = 1500;
         this.weaponNum = 0;
+        this.particleController = new ParticleController();
         createWeapons();
 
         this.currentWeapon = weapons[weaponNum];
@@ -179,8 +181,10 @@ public class Hero {
 
     public void takeDamage(float amount) {
         hp -= amount;
-        if (hp <= 0) {
-        }
+    }
+
+    public void setPause(boolean pause){
+        gc.setPause(pause);
     }
 
     public void update(float dt) {
@@ -282,6 +286,7 @@ public class Hero {
 
         if (Gdx.input.isKeyPressed(Input.Keys.P)) {
             shop.setVisible(true);
+            setPause(true);
         }
     }
 

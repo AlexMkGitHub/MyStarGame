@@ -31,58 +31,65 @@ simpleButton
   orig: 320, 80
   offset: 0, 0
   index: -1
-ship
+shortButton
   rotate: false
   xy: 839, 2
+  size: 80, 80
+  orig: 80, 80
+  offset: 0, 0
+  index: -1
+ship
+  rotate: false
+  xy: 921, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 money
   rotate: false
-  xy: 905, 2
+  xy: 839, 84
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 ammo
   rotate: false
-  xy: 839, 68
+  xy: 905, 84
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 aidkit
   rotate: false
-  xy: 905, 68
+  xy: 839, 150
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 smButton
   rotate: false
-  xy: 839, 134
+  xy: 839, 216
   size: 120, 32
   orig: 120, 32
   offset: 0, 0
   index: -1
 bullet
   rotate: false
-  xy: 971, 2
+  xy: 987, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star16
   rotate: false
-  xy: 1005, 2
+  xy: 987, 36
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 mini
   rotate: false
-  xy: 1005, 20
+  xy: 921, 68
   size: 2, 2
   orig: 2, 2
   offset: 0, 0

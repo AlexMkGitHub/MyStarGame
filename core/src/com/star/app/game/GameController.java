@@ -22,6 +22,7 @@ public class GameController {
     private Stage stage;
     private float level;
     private float asteroidScale;
+    private boolean pause;
 
     /*-----------Моя реализация проверки жив герой или нет-----------*/
     private boolean crashHero;
@@ -34,6 +35,10 @@ public class GameController {
 
     public ParticleController getParticleController() {
         return particleController;
+    }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
     }
 
     public PowerUpsController getPowerUpsController() {
@@ -87,7 +92,9 @@ public class GameController {
         /*-----------Моя реализация паузы в игре-----------*/
 //        hero.gamePause();
 //        if (!hero.isPause()) {
-
+        if (pause) {
+            return;
+        }
         background.update(dt);
         asteroidController.update(dt);
         hero.update(dt);
