@@ -2,6 +2,7 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,7 +15,11 @@ import com.star.app.screen.utils.Assets;
 
 public class Hero {
     public enum Skill {
-        HP_MAX(20, 10), HP(20, 10), WEAPON(100, 1), MAGNET(50, 20);
+        HP_MAX(20, 10), HP(20, 10), WEAPON(100, 1);
+
+        /*-----------Моя реализация магнита в игре-----------*/
+//        ,MAGNET(50, 20);
+        /*---------------------------------------------------*/
 
         int cost;
         int power;
@@ -38,7 +43,11 @@ public class Hero {
     private int hpMax;
     private int hp;
     private Circle hitArea;
-    private Circle magneticHitArea;
+
+    /*-----------Моя реализация магнита в игре-----------*/
+    //private Circle magneticHitArea;
+    /*---------------------------------------------------*/
+
     private float fireTimer;
     private int score;
     private int scoreView;
@@ -54,10 +63,14 @@ public class Hero {
     //    public static int scorePublic;
     //    public static int moneyPublic;
     //    private boolean pause;
+    /*-------------------------------------------------*/
 
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
-    private float magneticRadius = 0;
+
+    /*-----------Моя реализация магнита в игре-----------*/
+    //private float magneticRadius = 0;
+    /*---------------------------------------------------*/
 
     public int getScore() {
         return score;
@@ -103,9 +116,11 @@ public class Hero {
         return hitArea;
     }
 
-    public Circle getMagneticHitArea() {
-        return magneticHitArea;
-    }
+    /*-----------Моя реализация магнита в игре-----------*/
+//    public Circle getMagneticHitArea() {
+//        return magneticHitArea;
+//    }
+    /*--------------------------------------------------*/
 
     public Vector2 getVelocity() {
         return velocity;
@@ -119,6 +134,7 @@ public class Hero {
 //    public boolean isPause() {
 //        return pause;
 //    }
+    /*--------------------------------------------------*/
 
     public void addScore(int amount) {
         score += amount;
@@ -137,8 +153,10 @@ public class Hero {
     }
 
     public Hero(GameController gc) {
+
         /*-----------Моя реализация паузы в игре-----------*/
 //        this.pause = false;
+        /*-------------------------------------------------*/
 
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
@@ -149,7 +167,11 @@ public class Hero {
         this.hpMax = 100;
         this.hp = hpMax;
         this.hitArea = new Circle(position, BASE_RADIUS);
-        this.magneticHitArea = new Circle(position, magneticRadius);
+
+        /*-----------Моя реализация магнита в игре-----------*/
+//        this.magneticHitArea = new Circle(position, magneticRadius);
+        /*---------------------------------------------------*/
+
         this.hitArea.setRadius(BASE_RADIUS);
         this.sb = new StringBuilder();
         this.shop = new Shop(this);
@@ -172,6 +194,7 @@ public class Hero {
         /*-----------Моя реализация паузы в игре-----------*/
 //        moneyPublic = money;
 //        scorePublic = scoreView;
+        /*-------------------------------------------------*/
     }
 
     public void render(SpriteBatch batch) {
@@ -183,7 +206,7 @@ public class Hero {
         hp -= amount;
     }
 
-    public void setPause(boolean pause){
+    public void setPause(boolean pause) {
         gc.setPause(pause);
     }
 
@@ -193,7 +216,11 @@ public class Hero {
         boardControl(dt);
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
-        magneticHitArea.setPosition(position);
+
+        /*-----------Моя реализация магнита в игре-----------*/
+//        magneticHitArea.setPosition(position);
+        /*---------------------------------------------------*/
+
         float stopKoef = 1.0f - 0.8f * dt;
         if (stopKoef < 0.0f) {
             stopKoef = 0.0f;
@@ -302,6 +329,7 @@ public class Hero {
 //            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 //        }
 //    }
+    /*--------------------------------------------------*/
 
     public boolean upgrade(Skill skill) {
         switch (skill) {
@@ -327,9 +355,11 @@ public class Hero {
                 }
                 break;
 
-            case MAGNET:
-                magneticHitArea.setRadius(magneticRadius += 25);
-                return true;
+            /*-----------Моя реализация магнита в игре-----------*/
+//            case MAGNET:
+//                magneticHitArea.setRadius(magneticRadius += 25);
+//                return true;
+            /*---------------------------------------------------*/
 
         }
         return false;
@@ -386,6 +416,7 @@ public class Hero {
 //            gc.getBulletController().setup(wx, wy,
 //                    MathUtils.cosDeg(angle) * 500.0f + velocity.x,
 //                    MathUtils.sinDeg(angle) * 500.0f + velocity.y);
+            /*-------------------------------------------------------*/
         }
     }
 

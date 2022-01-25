@@ -54,12 +54,14 @@ public class Assets {
                 createStandardFont(24);
                 break;
 
-            case GAME_OVER_MY:
-                assetManager.load("images/game.pack", TextureAtlas.class);
-                createStandardFont(84);
-                createStandardFont(32);
-                createStandardFont(24);
-                break;
+            /*-----------Моя реализация магнита в игре-----------*/
+//            case GAME_OVER_MY:
+//                assetManager.load("images/game.pack", TextureAtlas.class);
+//                createStandardFont(84);
+//                createStandardFont(32);
+//                createStandardFont(24);
+//                break;
+            /*----------------------------------------------------*/
 
 
         }

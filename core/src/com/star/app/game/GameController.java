@@ -92,6 +92,8 @@ public class GameController {
         /*-----------Моя реализация паузы в игре-----------*/
 //        hero.gamePause();
 //        if (!hero.isPause()) {
+        /*------------------------------------------------*/
+
         if (pause) {
             return;
         }
@@ -103,6 +105,7 @@ public class GameController {
 
         /*-----------Моя реализация выпадания улучшалок-----------*/
         //     powerAddController.update(dt);
+        /*--------------------------------------------------------*/
 
         powerUpsController.update(dt);
         checkCollisions();
@@ -126,6 +129,7 @@ public class GameController {
 
         /*-----------Моя реализация выпадания улучшалок-----------*/
 //              addHeroGifts();
+        /*--------------------------------------------------------*/
 
         stage.act(dt);
         addAsteroids();
@@ -136,6 +140,7 @@ public class GameController {
 //        if (crashHero) {
 //            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER_MY);
 //        }
+        /*----------------------------------------------------------------*/
 
         for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
             Asteroid a = asteroidController.getActiveList().get(j);
@@ -173,6 +178,7 @@ public class GameController {
 //                    long delay = 2000;
 //                    timer.schedule(task, delay);
 //                }
+                /*--------------------------------------------------------------------*/
 
             }
         }
@@ -211,19 +217,22 @@ public class GameController {
         }
 
 
-        /*-----------Моя реализация притягивания предметов к герою-----------*/
-        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
-            PowerUp p = powerUpsController.getActiveList().get(i);
-            if (p.getHitArea().overlaps(hero.getMagneticHitArea())) {
-                float dst = p.getPosition().dst(hero.getPosition());
-                float halfOverLen = (p.getHitArea().radius + hero.getMagneticHitArea().radius - dst) / 100;
-                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
-                p.getPosition().mulAdd(tempVec, halfOverLen);
-            }
+        /*------------------Моя реализация магнита в игре----------------------*/
+//        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+//            PowerUp p = powerUpsController.getActiveList().get(i);
+//            if (p.getHitArea().overlaps(hero.getMagneticHitArea())) {
+//                float dst = p.getPosition().dst(hero.getPosition());
+//                float halfOverLen = (p.getHitArea().radius + hero.getMagneticHitArea().radius - dst) / 100;
+//                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+//                p.getPosition().mulAdd(tempVec, halfOverLen);
+//            }
+//
+//        }
+        /*----------------------------------------------------------------------*/
 
-        }
     }
 
+    /*-----------Моя реализация добавления астероидов в игре-----------*/
     private void addAsteroids() {
         if (asteroidController.getActiveList().isEmpty()) {
             level += 0.5f;
@@ -239,6 +248,7 @@ public class GameController {
             }
         }
     }
+    /*---------------------------------------------------------------------*/
 
     public void dispose() {
         background.dispose();
@@ -302,5 +312,6 @@ public class GameController {
 //            }
 //        }
 //    }
+    /*----------------------------------------------------------------------------------*/
 }
 
