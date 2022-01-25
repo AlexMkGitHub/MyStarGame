@@ -103,19 +103,19 @@ public class Shop extends Group {
         this.addActor(btnWeapon);
 
         /*-----------Моя реализация магнита в игре-----------*/
-//        final TextButton btnMagnet = new TextButton("Magnet", textButtonStyle);
-//        btnMagnet.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeEvent event, Actor actor) {
-//                if (hero.isMoneyEnough(Hero.Skill.MAGNET.cost)) {
-//                    if (hero.upgrade(Hero.Skill.MAGNET)) {
-//                        hero.decreaseMoney(Hero.Skill.MAGNET.cost);
-//                    }
-//                }
-//            }
-//        });
-//        btnMagnet.setPosition(20, 0);
-//        this.addActor(btnMagnet);
+        final TextButton btnMagnet = new TextButton("Magnet", textButtonStyle);
+        btnMagnet.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (hero.isMoneyEnough(Hero.Skill.MAGNET.cost)) {
+                    if (hero.upgrade(Hero.Skill.MAGNET)) {
+                        hero.decreaseMoney(Hero.Skill.MAGNET.cost);
+                    }
+                }
+            }
+        });
+        btnMagnet.setPosition(120, 100);
+        this.addActor(btnMagnet);
         /*---------------------------------------------------*/
 
         this.setPosition(20, 20);
