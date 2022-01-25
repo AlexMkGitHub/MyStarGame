@@ -41,7 +41,7 @@ public class GameOverScreen extends AbstractScreen {
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf");
         this.font48 = Assets.getInstance().getAssetManager().get("fonts/font48.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
-        this.gameOverMusic = Assets.getInstance().getAssetManager().get("audio/gameover.mp3");
+        this.gameOverMusic = Assets.getInstance().getAssetManager().get("audio/game_over.mp3");
         this.gameOverMusic.setLooping(false);
         gameOverMusic.play();
 
