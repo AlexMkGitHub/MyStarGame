@@ -38,37 +38,51 @@ shortButton
   orig: 80, 80
   offset: 0, 0
   index: -1
-ship
+ship2
   rotate: false
   xy: 921, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-money
+ship
   rotate: false
   xy: 839, 84
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-ammo
+money
   rotate: false
   xy: 905, 84
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-aidkit
+bot
   rotate: false
   xy: 839, 150
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
-smButton
+ammo
+  rotate: false
+  xy: 905, 150
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+aidkit
   rotate: false
   xy: 839, 216
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+smButton
+  rotate: false
+  xy: 839, 282
   size: 120, 32
   orig: 120, 32
   offset: 0, 0

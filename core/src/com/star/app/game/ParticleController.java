@@ -14,7 +14,7 @@ public class ParticleController extends ObjectPool<Particle> {
                 float randomAngle = MathUtils.random(0, 6.28f);
                 float randomSpeed = MathUtils.random(0, 50.0f);
                 setup(x, y, (float) Math.cos(randomAngle) * randomSpeed, (float) Math.sin(randomAngle) * randomSpeed,
-                        1.2f, 2.0f, 1.8f,
+                        1.2f, 2.0f, 5.8f,
                         1, 1, 0, 1,
                         1, 0, 0, 0.2f);
             }

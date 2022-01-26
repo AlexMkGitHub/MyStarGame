@@ -101,7 +101,7 @@ public class Hero extends Ship {
     /*--------------------------------------------------*/
 
     public Hero(GameController gc) {
-        super(gc, 3, 500f);
+        super(gc, 100, 500f, 0);
         this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
         this.velocity = new Vector2(0, 0);
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
@@ -165,6 +165,11 @@ public class Hero extends Ship {
         updateScore(dt);
         boardControl(dt);
         magneticField.setPosition(position);
+        float stopKoef = 1.0f - 0.8f * dt;
+        if (stopKoef < 0.0f) {
+            stopKoef = 0.0f;
+        }
+        velocity.scl(stopKoef);
 
         /*-----------Моя реализация магнита в игре-----------*/
 //        magneticHitArea.setPosition(position);

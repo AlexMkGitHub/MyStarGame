@@ -5,15 +5,18 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
-public class Ship {
+public class Ship implements Poolable {
 
     protected TextureRegion texture;
     protected Vector2 position;
     protected Vector2 velocity;
     protected GameController gc;
     protected Circle hitArea;
+    protected Circle radiusDetected;
     protected Weapon currentWeapon;
     protected Weapon[] weapons;
     protected float angle;
@@ -22,6 +25,9 @@ public class Ship {
     protected int hpMax;
     protected int hp;
     protected int weaponNum;
+    private boolean active;
+    private final float BASE_SIZE = 64;
+    private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
 
     public Weapon getCurrentWeapon() {
         return currentWeapon;
@@ -47,28 +53,37 @@ public class Ship {
         return hp > 0;
     }
 
+    public void setTexture(TextureRegion texture) {
+        this.texture = texture;
+    }
 
-    public Ship(GameController gc, int hpMax, float enginePower) {
+    public Ship(GameController gc, int hpMax, float enginePower, int weapon) {
         this.gc = gc;
         this.hpMax = hpMax;
         this.hp = hpMax;
         this.angle = 0.0f;
         this.enginePower = enginePower;
+        this.active = false;
+        this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
+        this.velocity = new Vector2(0, 0);
+        this.texture = Assets.getInstance().getAtlas().findRegion("bot");
+        this.hitArea = new Circle(position, 29);
+        this.hitArea.setRadius(BASE_RADIUS);
+        this.radiusDetected = new Circle(position, 200);
         createWeapons();
-        this.currentWeapon = weapons[weaponNum];
+        this.currentWeapon = weapons[weapon];
+        this.active = false;
+    }
 
+    public Circle getRadiusDetected() {
+        return radiusDetected;
     }
 
     public void update(float dt) {
         fireTimer += dt;
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
-        float stopKoef = 1.0f - 0.8f * dt;
-        if (stopKoef < 0.0f) {
-            stopKoef = 0.0f;
-        }
-        velocity.scl(stopKoef);
-
+        radiusDetected.setPosition(position);
         checkSpaceBorders();
     }
 
@@ -81,7 +96,7 @@ public class Ship {
         hp -= amount;
     }
 
-    private void checkSpaceBorders() {
+    protected void checkSpaceBorders() {
         /*------------Определение границы экрана, чтобы корабль не улетал за его пределы.----------------*/
         if (position.x < 32) {
             position.x = 32;
@@ -145,5 +160,20 @@ public class Ship {
                                 new Vector3(28, -90, -20),
                         }),
         };
+    }
+
+    public void deactivate() {
+        active = false;
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
+    }
+
+    public void activate(float x, float y, float vx, float vy) {
+        position.set(x, y);
+        velocity.set(vx, vy);
+        active = true;
     }
 }

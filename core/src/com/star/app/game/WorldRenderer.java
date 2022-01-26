@@ -41,6 +41,7 @@ public class WorldRenderer {
         gc.getInfoController().render(batch, font20);
         gc.getHero().render(batch);
         gc.getHero().renderGUI(batch, font20);
+        gc.getBotController().render(batch);
 
         /*-------------------Моя реализация: оповещении о поднятии уровня исчезает через 1.5 сек.----------------*/
         if (gc.getAsteroidController().getActiveList().isEmpty()) {
