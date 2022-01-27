@@ -1,5 +1,6 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
@@ -15,6 +16,7 @@ public class WorldRenderer {
     private BitmapFont font32;
     private BitmapFont font72;
     private StringBuilder sb;
+    private Music fight;
 
     public WorldRenderer(GameController gc, SpriteBatch batch) {
         this.gc = gc;
@@ -22,6 +24,7 @@ public class WorldRenderer {
         this.font20 = Assets.getInstance().getAssetManager().get("fonts/font20.ttf", BitmapFont.class);
         this.font32 = Assets.getInstance().getAssetManager().get("fonts/font32.ttf", BitmapFont.class);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf", BitmapFont.class);
+        this.fight = Assets.getInstance().getAssetManager().get("audio/fight.mp3");
         this.sb = new StringBuilder();
     }
 
@@ -50,6 +53,9 @@ public class WorldRenderer {
                 sb.append("Level: ").append(gc.getLevel() + 1);
                 font72.draw(batch, sb, 0, ScreenManager.SCREEN_HALF_HEIGHT, ScreenManager.SCREEN_WIDTH,
                         Align.center, false);
+            }
+            if (gc.getTimerAsteroidsAdds() > 2.5f) {
+                fight.play();
             }
         }
         /*----------------------------------------------------------------------------------------------------*/

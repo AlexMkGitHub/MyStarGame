@@ -64,8 +64,9 @@ public class Bot extends Ship implements Poolable {
             }
         }
 
-        if (gc.getHero().getPosition().dst(position) < 300) {
+        if (gc.getHero().getPosition().dst(position) < 300 && gc.getHero().hp > 0) {
             tryToFire();
+
         }
 
     }

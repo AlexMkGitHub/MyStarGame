@@ -101,7 +101,7 @@ public class Hero extends Ship {
     /*--------------------------------------------------*/
 
     public Hero(GameController gc) {
-        super(gc, 100, 500f, 0);
+        super(gc, 10, 500f, 0);
         this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
         this.velocity = new Vector2(0, 0);
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");

@@ -33,9 +33,11 @@ public class GameController {
     private float timerBots;
     private float rndTime;
     private Music music;
+    private Music hahaha;
     private StringBuilder sb;
     private float delta;
     private float dtTime;
+    private float gameOverTimer;
 
     /*-----------Моя реализация проверки жив герой или нет-----------*/
     private boolean crashHero;
@@ -143,17 +145,16 @@ public class GameController {
         this.delta = 1.0f;
         this.rndTime = MathUtils.random(3.0f, 10.0f);
         this.timerBots = 1.0f;
+        this.gameOverTimer = 0.0f;
         this.dtTime = Gdx.graphics.getDeltaTime();
         this.music = Assets.getInstance().getAssetManager().get("audio/mortal.mp3");
+        this.hahaha = Assets.getInstance().getAssetManager().get("audio/hahaha.mp3");
         this.music.setLooping(true);
         this.music.setVolume(0.1f);
         this.music.play();
         this.timerAsteroidsAdds = 0.0f;
         stage.addActor(hero.getShop());
         Gdx.input.setInputProcessor(stage);
-
-        botController.setup(100, 100);
-        botController.setup(1000, -100);
 
 
         /*-----------Моя реализация появление астероидов-----------*/
@@ -192,23 +193,27 @@ public class GameController {
 //        botRndVelocity(dt);
 
         /*----Проверка жив герой или нет + я добавил эффект уничтожения и таймер задержки до появления экрана GameOver--*/
-        if (!hero.isAlive()) {
-            music.stop();
-            if (crashHero) {
-                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
-            }
-            hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
-            getParticleController().getEffectBuilder().buildMonsterSplash(hero.getPosition().x, hero.getPosition().y);
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    crashHero = true;
-                }
-            };
-            Timer timer = new Timer();
-            long delay = 3000;
-            timer.schedule(task, delay);
-        }
+//        if (!hero.isAlive()) {
+//
+//
+//            if (crashHero) {
+//                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
+//            }
+//            hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
+//            getParticleController().getEffectBuilder().buildMonsterSplash(hero.getPosition().x, hero.getPosition().y);
+//            if (gameOverTimer == 15){
+//                crashHero = true;
+//            }
+//            TimerTask task = new TimerTask() {
+//                @Override
+//                public void run() {
+//                    crashHero = true;
+//                }
+//            };
+//            Timer timer = new Timer();
+//            long delay = 10000;
+//            timer.schedule(task, delay);
+//        }
         /*-----------------------------------------------------------------------------------------------------*/
 
         /*-----------Моя реализация выпадания улучшалок-----------*/
@@ -233,9 +238,26 @@ public class GameController {
 //                        MathUtils.random(-200, 200),
 //                        MathUtils.random(-200, 200), MathUtils.random(0, 4));
 
+                botController.setup(100, 100);
+                botController.setup(1000, -100);
+
             }
         }
         /*--------------------------------------------------------------------------------------*/
+
+        if (!hero.isAlive()) {
+            hahaha.play();
+            music.stop();
+            gameOverTimer += dt;
+            hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
+            getParticleController().getEffectBuilder().buildMonsterSplash(hero.getPosition().x, hero.getPosition().y);
+            tempVec.set(-1256.0f, -1256.0f);
+            hero.getPosition().mulAdd(tempVec, 0);
+            if (gameOverTimer > 2.5f){
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
+            }
+        }
+
         stage.act(dt);
 
         /*-----------Моя реализация появление астероидов-----------*/
@@ -303,22 +325,7 @@ public class GameController {
 
 
         /*-----------Моя реализация проверки жив герой или нет-----------*/
-        if (hero.getHp() <= 0) {
-            hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
-            getParticleController().getEffectBuilder().buildMonsterSplash(hero.getPosition().x, hero.getPosition().y);
-            tempVec.set(-1256.0f, -1256.0f);
-            hero.getPosition().mulAdd(tempVec, 0);
 
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    crashHero = true;
-                }
-            };
-            Timer timer = new Timer();
-            long delay = 2000;
-            timer.schedule(task, delay);
-        }
         /*--------------------------------------------------------------------*/
 
 
