@@ -74,7 +74,10 @@ public class Ship implements Poolable {
         this.hitArea.setRadius(BASE_RADIUS);
         this.radiusDetected = new Circle(position, 200);
         createWeapons();
-        this.currentWeapon = weapons[weapon];
+        if (gc.getLevel() <= 4) {
+            weapon = gc.getLevel();
+        } else weapon = 4;
+        this.currentWeapon = weapons[MathUtils.random(0, weapon)];
         this.active = false;
     }
 
@@ -83,7 +86,7 @@ public class Ship implements Poolable {
         velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
     }
 
-    public void brake (float dt){
+    public void brake(float dt) {
         velocity.x -= MathUtils.cosDeg(angle) * enginePower / 2 * dt;
         velocity.y -= MathUtils.sinDeg(angle) * enginePower / 2 * dt;
     }
@@ -112,8 +115,8 @@ public class Ship implements Poolable {
 
     public void takeDamage(float amount) {
         hp -= amount;
-        if(hp <=0){
-            hp=0;
+        if (hp <= 0) {
+            hp = 0;
         }
     }
 

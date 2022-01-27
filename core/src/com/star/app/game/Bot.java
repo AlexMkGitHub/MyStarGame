@@ -13,6 +13,7 @@ public class Bot extends Ship implements Poolable {
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
     private boolean active;
     private Vector2 tempVec;
+    private int weapon;
 
     public int getHp() {
         return hp;
@@ -23,7 +24,7 @@ public class Bot extends Ship implements Poolable {
     }
 
     public Bot(GameController gc) {
-        super(gc, 50, 200, 0);
+        super(gc, 10 * gc.getLevel(), MathUtils.random(50, 230), MathUtils.random(0, 2));
         this.position = new Vector2(0, 0);
         this.velocity = new Vector2(0, 0);
         this.tempVec = new Vector2(0, 0);
@@ -41,6 +42,7 @@ public class Bot extends Ship implements Poolable {
         //Проверка жив бот или нет, если нет, то деактивация
         if (!isAlive()) {
             deactivate();
+            gc.getParticleController().getEffectBuilder().buildMonsterSplash(position.x, position.y);
         }
     }
 

@@ -308,7 +308,7 @@ public class GameController {
                 Bot b = botController.getActiveList().get(i);
                 if (a.getHitArea().overlaps(b.getHitArea())) {
                     float dst = a.getPosition().dst(b.getPosition());
-                    float halfOverLen = (a.getHitArea().radius + b.getHitArea().radius - dst) / 2;
+                    float halfOverLen = (a.getHitArea().radius + b.getHitArea().radius - dst) / 100;
                     tempVec.set(b.getPosition()).sub(a.getPosition()).nor();
                     b.getPosition().mulAdd(tempVec, halfOverLen);
                     a.getPosition().mulAdd(tempVec, -halfOverLen);
