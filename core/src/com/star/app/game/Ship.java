@@ -3,6 +3,7 @@ package com.star.app.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.star.app.game.helpers.Poolable;
@@ -25,9 +26,14 @@ public class Ship implements Poolable {
     protected int hpMax;
     protected int hp;
     protected int weaponNum;
+    protected OwnerType ownerType;
     private boolean active;
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
+
+    public OwnerType getOwnerType() {
+        return ownerType;
+    }
 
     public Weapon getCurrentWeapon() {
         return currentWeapon;
@@ -49,9 +55,6 @@ public class Ship implements Poolable {
         return position;
     }
 
-    public boolean isAlive() {
-        return hp > 0;
-    }
 
     public void setTexture(TextureRegion texture) {
         this.texture = texture;
@@ -75,6 +78,16 @@ public class Ship implements Poolable {
         this.active = false;
     }
 
+    public void accelrrate(float dt) {
+        velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
+        velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
+    }
+
+    public void brake (float dt){
+        velocity.x -= MathUtils.cosDeg(angle) * enginePower / 2 * dt;
+        velocity.y -= MathUtils.sinDeg(angle) * enginePower / 2 * dt;
+    }
+
     public Circle getRadiusDetected() {
         return radiusDetected;
     }
@@ -85,6 +98,11 @@ public class Ship implements Poolable {
         hitArea.setPosition(position);
         radiusDetected.setPosition(position);
         checkSpaceBorders();
+        float stopKoef = 1.0f - 0.8f * dt;
+        if (stopKoef < 0.0f) {
+            stopKoef = 0.0f;
+        }
+        velocity.scl(stopKoef);
     }
 
     public void render(SpriteBatch batch) {
@@ -94,6 +112,9 @@ public class Ship implements Poolable {
 
     public void takeDamage(float amount) {
         hp -= amount;
+        if(hp <=0){
+            hp=0;
+        }
     }
 
     protected void checkSpaceBorders() {
@@ -169,6 +190,10 @@ public class Ship implements Poolable {
     @Override
     public boolean isActive() {
         return active;
+    }
+
+    public boolean isAlive() {
+        return hp > 0;
     }
 
     public void activate(float x, float y, float vx, float vy) {

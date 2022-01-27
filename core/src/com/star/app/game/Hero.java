@@ -111,6 +111,7 @@ public class Hero extends Ship {
         this.shop = new Shop(this);
         this.magneticField = new Circle(position, 100);
         this.hitArea.setRadius(BASE_RADIUS);
+        this.ownerType = OwnerType.PLAYER;
 
 
         /*-----------Моя реализация паузы в игре-----------*/
@@ -165,11 +166,6 @@ public class Hero extends Ship {
         updateScore(dt);
         boardControl(dt);
         magneticField.setPosition(position);
-        float stopKoef = 1.0f - 0.8f * dt;
-        if (stopKoef < 0.0f) {
-            stopKoef = 0.0f;
-        }
-        velocity.scl(stopKoef);
 
         /*-----------Моя реализация магнита в игре-----------*/
 //        magneticHitArea.setPosition(position);
@@ -211,8 +207,7 @@ public class Hero extends Ship {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
-            velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
+            accelrrate(dt);
 
             /*------------Эффект работы двигателя при ускорении---------------*/
             if (velocity.len() > 50.0f) {
@@ -230,8 +225,7 @@ public class Hero extends Ship {
 
         /*------------Управление задним ходом корабля-------------------------------------*/
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            velocity.x -= MathUtils.cosDeg(angle) * enginePower / 2 * dt;
-            velocity.y -= MathUtils.sinDeg(angle) * enginePower / 2 * dt;
+            brake(dt);
 
             /*------------Эффект работы двигателя при ускорении---------------*/
             float bx = position.x + MathUtils.cosDeg(angle + 90) * 20;

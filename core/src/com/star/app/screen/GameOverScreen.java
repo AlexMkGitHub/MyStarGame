@@ -43,6 +43,7 @@ public class GameOverScreen extends AbstractScreen {
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
         this.gameOverMusic = Assets.getInstance().getAssetManager().get("audio/game_over.mp3");
         this.gameOverMusic.setLooping(false);
+        this.gameOverMusic.setVolume(0.50f);
         gameOverMusic.play();
 
     }

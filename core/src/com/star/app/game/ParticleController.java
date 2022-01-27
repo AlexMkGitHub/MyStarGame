@@ -8,7 +8,9 @@ import com.star.app.game.helpers.ObjectPool;
 import com.star.app.screen.utils.Assets;
 
 public class ParticleController extends ObjectPool<Particle> {
+
     public class EffectBuilder {
+
         public void buildMonsterSplash(float x, float y) {
             for (int i = 0; i < 15; i++) {
                 float randomAngle = MathUtils.random(0, 6.28f);
@@ -54,16 +56,40 @@ public class ParticleController extends ObjectPool<Particle> {
             }
         }
 
-        public void shipDestroy(float x, float y) {
-            for (int i = 0; i < 16; i++) {
-                float angle = 6.28f / 16.0f * i;
-                setup(x, y, (float) Math.cos(angle) * 100, (float) Math.sin(angle) * 100, 0.8f, 1.5f,
-                        2.5f, 1, 0, 0, 1, 1, 1, 0, 0.5f);
-            }
-
-
+        public void bulletCollideWithAsteroid(Bullet b) {
+            setup(b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
+                    b.getVelocity().x * -0.1f + MathUtils.random(-20, 20), b.getVelocity().y * -0.1f + MathUtils.random(-20, 20),
+                    0.1f, 2.2f, 4.2f,
+                    1.0f, 1.0f, 1.0f, 1,
+                    0.0f, 0.0f, 1.0f, 0.5f);
         }
+
+        // Для каждого типа кораблей свой вид пуль
+        public void createBulletTrace(OwnerType ownerType, Bullet b) {
+            switch (ownerType) {
+                case PLAYER:
+                    for (int i = 0; i < 2; i++) {
+                        setup(b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
+                                b.getVelocity().x * 0.1f + MathUtils.random(-10, 10), b.getVelocity().y * 0.1f + MathUtils.random(-10, 10),
+                                0.1f, 0.8f, 0.2f,
+                                1.0f, 0.7f, 0, 1,
+                                1, 1, 1, 0);
+                    }
+                    break;
+                case BOT:
+                    setup(b.getPosition().x, b.getPosition().y,
+                            b.getVelocity().x * 0.1f + MathUtils.random(-10, 10), b.getVelocity().y * 0.1f + MathUtils.random(-10, 10),
+                            0.13f, 2.2f, 1.5f,
+                            0.0f, 0.9f, 0, 1,
+                            0, 0.8f, 0.1f, 0);
+                    break;
+
+            }
+        }
+
+
     }
+
 
     private TextureRegion oneParticle;
     private EffectBuilder effectBuilder;
@@ -71,6 +97,7 @@ public class ParticleController extends ObjectPool<Particle> {
     public EffectBuilder getEffectBuilder() {
         return effectBuilder;
     }
+
 
     public ParticleController() {
         this.oneParticle = Assets.getInstance().getAtlas().findRegion("star16");
