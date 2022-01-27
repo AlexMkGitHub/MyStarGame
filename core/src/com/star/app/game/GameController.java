@@ -302,7 +302,8 @@ public class GameController {
                 Vector2 botPos = botMy.getPosition().cpy().nor();
                 Vector2 botVel = botMy.getVelocity().cpy().nor();
                 tempVec.set(hero.getPosition()).sub(botMy.getPosition());
-                float af = -botPos.angleDeg(tempVec);
+                //float af = -botPos.angleDeg(tempVec);
+                float af = tempVec.angleDeg();
                 botMy.angle = af;
                 botMy.tryToFire();
 
