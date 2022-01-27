@@ -1,3 +1,5 @@
+
+/*-----------Моя реализация окна паузы в игре-----------*/
 package com.star.app.screen;
 
 import com.badlogic.gdx.Gdx;
@@ -83,7 +85,7 @@ public class GameOverScreenMy extends AbstractScreen {
         batch.begin();
         font84.draw(batch, "Game over!!!", 0, 600, 1280, Align.center, false);
 
-        /*-----------Моя реализация паузы в игре-----------*/
+        /*-----------статические переменные закомментированы в Hero-----------*/
 //        font32.draw(batch, "You score: " + Hero.scorePublic, 0, 450, 1280, Align.center, false);
 //        font32.draw(batch, "You money: " + Hero.moneyPublic, 0, 400, 1280, Align.center, false);
 

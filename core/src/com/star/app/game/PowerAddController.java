@@ -1,3 +1,5 @@
+
+    /*-----------Моя реализация выпадания улучшалок в игре-----------*/
 package com.star.app.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

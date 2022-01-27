@@ -102,6 +102,7 @@ public class Shop extends Group {
         btnWeapon.setPosition(20, 100);
         this.addActor(btnWeapon);
 
+        /*-----------Моя реализация магнита в игре-----------*/
         final TextButton btnMagnet = new TextButton("Magnet", textButtonStyle);
         btnMagnet.addListener(new ChangeListener() {
             @Override
@@ -113,9 +114,9 @@ public class Shop extends Group {
                 }
             }
         });
-        btnMagnet.setPosition(20, 0);
+        btnMagnet.setPosition(120, 100);
         this.addActor(btnMagnet);
-
+        /*---------------------------------------------------*/
 
         this.setPosition(20, 20);
         this.setVisible(false);

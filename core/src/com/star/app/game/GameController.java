@@ -1,6 +1,8 @@
 package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -17,21 +19,64 @@ public class GameController {
     private BulletController bulletController;
     private ParticleController particleController;
     private PowerUpsController powerUpsController;
+    private InfoController infoController;
+    private BotControllerMy botControllerMy;
     private Hero hero;
+    private BotMy botMy;
     private Vector2 tempVec;
     private Stage stage;
-    private float level;
-    private float asteroidScale;
+    private int level;
     private boolean pause;
+    private float timer;
+    private float timerAsteroidsAdds;
+    private float timerBots;
+    private float rndTime;
+    private Music music;
+    private StringBuilder sb;
+    private float delta;
+    private float dtTime;
 
     /*-----------Моя реализация проверки жив герой или нет-----------*/
     private boolean crashHero;
 
+    /*-----------Моя реализация появление астероидов-----------*/
+//    private float sizeAsteroid;
+    /*---------------------------------------------------------*/
+
+    /*---------------Моя реализация уровня игры-------------*/
+    //private int gameLevel;
+    /*------------------------------------------------------*/
+
     /*-----------Моя реализация выпадания улучшалок-----------*/
-    //private PowerAddController powerAddController;
+//    private PowerAddController powerAddController;
+//
 //    public PowerAddController getPowerAddController() {
 //        return powerAddController;
 //    }
+    /*--------------------------------------------------------*/
+
+    /*---------------Моя реализация уровня игры-------------*/
+//    public int getGameLevel() {
+//        return gameLevel;
+//    }
+    /*-----------------------------------------------------*/
+
+
+    public float getTimer() {
+        return timer;
+    }
+
+    public float getTimerAsteroidsAdds() {
+        return timerAsteroidsAdds;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public InfoController getInfoController() {
+        return infoController;
+    }
 
     public ParticleController getParticleController() {
         return particleController;
@@ -61,11 +106,16 @@ public class GameController {
         return bulletController;
     }
 
+    public BotControllerMy getBotController() {
+        return botControllerMy;
+    }
+
     public Stage getStage() {
         return stage;
     }
 
     public GameController(SpriteBatch batch) {
+
         /*-----------Моя реализация выпадания улучшалок-----------*/
 //        this.powerAddController = new PowerAddController(this);
 
@@ -77,37 +127,62 @@ public class GameController {
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
+        this.particleController = new ParticleController();
+        this.botControllerMy = new BotControllerMy(this, MathUtils.random(-50, 50), MathUtils.random(-100, 300), MathUtils.random(0, 4));
         this.tempVec = new Vector2();
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
+        this.infoController = new InfoController();
+        this.sb = new StringBuilder();
+        this.level = 0;
+        this.delta = 1.0f;
+        this.rndTime = MathUtils.random(3.0f, 10.0f);
+        this.timerBots = 1.0f;
+        this.dtTime = Gdx.graphics.getDeltaTime();
+        this.music = Assets.getInstance().getAssetManager().get("audio/mortal.mp3");
+        this.music.setLooping(true);
+        this.music.setVolume(0.1f);
+        this.music.play();
+        this.timerAsteroidsAdds = 0.0f;
         stage.addActor(hero.getShop());
         Gdx.input.setInputProcessor(stage);
-        this.asteroidScale = 1.0f;
-        this.particleController = new ParticleController();
 
-        /*-----------Появление астероидов-----------*/
-        addAsteroids();
+
+        /*-----------Моя реализация появление астероидов-----------*/
+//        this.sizeAsteroid = 0;
+        /*---------------------------------------------------------*/
+
     }
 
     public void update(float dt) {
+
         /*-----------Моя реализация паузы в игре-----------*/
 //        hero.gamePause();
 //        if (!hero.isPause()) {
+        /*------------------------------------------------*/
+
         if (pause) {
             return;
         }
+        delta = dt;
+        timer += dt;
         background.update(dt);
         asteroidController.update(dt);
         hero.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
-
+        infoController.update(dt);
+        botControllerMy.update(dt);
         /*-----------Моя реализация выпадания улучшалок-----------*/
         //     powerAddController.update(dt);
+        /*--------------------------------------------------------*/
 
         powerUpsController.update(dt);
         checkCollisions();
+        botRndVelocity(dt);
 
+        /*----Проверка жив герой или нет + я добавил эффект уничтожения и таймер задержки до появления экрана GameOver--*/
         if (!hero.isAlive()) {
+            music.stop();
             if (crashHero) {
                 ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
             }
@@ -120,23 +195,54 @@ public class GameController {
                 }
             };
             Timer timer = new Timer();
-            long delay = 2000;
+            long delay = 3000;
             timer.schedule(task, delay);
         }
+        /*-----------------------------------------------------------------------------------------------------*/
 
         /*-----------Моя реализация выпадания улучшалок-----------*/
 //              addHeroGifts();
+        /*--------------------------------------------------------*/
 
+
+        /*-------------------Моя реализация: астероиды появляются через 3 сек.----------------*/
+        if (asteroidController.getActiveList().size() == 0) {
+            timerAsteroidsAdds += dt;
+            if (timerAsteroidsAdds > 4.0f) {
+                level++;
+                timer = 0.0f;
+                timerAsteroidsAdds = 0.0f;
+                generateBigAsteroids(level <= 3 ? level : 3);
+                botControllerMy.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                        MathUtils.random(-200, 200),
+                        MathUtils.random(-200, 200), MathUtils.random(0, 4));
+                botControllerMy.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                        MathUtils.random(-200, 200),
+                        MathUtils.random(-200, 200), MathUtils.random(0, 4));
+
+            }
+        }
+        /*--------------------------------------------------------------------------------------*/
         stage.act(dt);
-        addAsteroids();
+
+        /*-----------Моя реализация появление астероидов-----------*/
+//               addAsteroids(level);
+        /*---------------------------------------------------------*/
+
     }
 
     private void checkCollisions() {
+
         /*-----------Моя реализация проверки жив герой или нет-----------*/
 //        if (crashHero) {
 //            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER_MY);
 //        }
+        /*----------------------------------------------------------------*/
 
+
+        /*----------------Проверка столкновения героя и астероида, отталкивание друг от друга если столкнулись-------*/
         for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
             Asteroid a = asteroidController.getActiveList().get(j);
             if (a.getHitArea().overlaps(hero.getHitArea())) {
@@ -154,9 +260,19 @@ public class GameController {
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 50);
                 }
-                hero.takeDamage(2 * level);
+                hero.takeDamage(level * 2);
+                sb.setLength(0);
+                sb.append("HP -  ").append(level * 2);
+                infoController.setup(hero.getPosition().x, hero.getPosition().y, sb.toString(), Color.RED);
 
-                /*-----------Моя реализация проверки жив герой или нет-----------*/
+            }
+
+            /*---------------Моя реализация увеличения урона при увеличении уровня игры-------------*/
+//                                hero.takeDamage(2 * gameLevel);
+            /*--------------------------------------------------------------------------------------*/
+
+
+            /*-----------Моя реализация проверки жив герой или нет-----------*/
 //                if (hero.getHp() <= 0) {
 //                    hero.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
 //                    getParticleController().getEffectBuilder().shipDestroy(hero.getPosition().x, hero.getPosition().y);
@@ -173,16 +289,57 @@ public class GameController {
 //                    long delay = 2000;
 //                    timer.schedule(task, delay);
 //                }
+            /*--------------------------------------------------------------------*/
 
-            }
         }
 
+        /*-----------Моя реализация реакции бота при приближении героя-----------*/
+        for (int i = 0; i < botControllerMy.getActiveList().size(); i++) {
+            BotMy botMy = botControllerMy.getActiveList().get(i);
+            botMy.botOldAngel = botMy.angle+180;
+            if (botMy.getRadiusDetected().contains(hero.getHitArea())) {
+                tempVec.set(hero.getPosition()).sub(botMy.getPosition()).nor();
+                Vector2 botPos = botMy.getPosition().cpy().nor();
+                Vector2 botVel = botMy.getVelocity().cpy().nor();
+                tempVec.set(hero.getPosition()).sub(botMy.getPosition());
+                float af = -botPos.angleDeg(tempVec);
+                botMy.angle = af;
+                botMy.tryToFire();
+
+            } else {
+                botMy.angle = botMy.botOldAngel;
+            }
+        }
+        /*---------------------------------------------------------------------------*/
+
+
+        /*-----------Моя реализация реакции бота при приближении астероида-----------*/
+        for (int i = 0; i < botControllerMy.getActiveList().size(); i++) {
+            BotMy botMy = botControllerMy.getActiveList().get(i);
+            botMy.botOldAngel = botMy.angle+180;
+            for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
+                Asteroid a = asteroidController.getActiveList().get(j);
+                if (botMy.radiusDetected.overlaps(a.getHitArea())) {
+                    float dst = botMy.getPosition().dst(a.getPosition());
+                    float halfOverLen = (botMy.radiusDetected.radius + a.getHitArea().radius * 3 - dst) / 150;
+                    tempVec.set(a.getPosition()).sub(botMy.getPosition()).nor();
+                    botMy.getPosition().mulAdd(tempVec, -halfOverLen);
+                    botMy.angle = botMy.getVelocity().angleDeg(botMy.getPosition());
+                } else {
+                    botMy.angle = botMy.botOldAngel;
+                }
+            }
+        }
+        /*-----------------------------------------------------------------------------------------------------------*/
+
+
+
+        /*---------------------Проверка попадания пуль в астероид и их уничтожение--------------------------*/
         for (int i = 0; i < bulletController.getActiveList().size(); i++) {
             Bullet b = bulletController.getActiveList().get(i);
             for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
                 Asteroid a = asteroidController.getActiveList().get(j);
                 if (a.getHitArea().contains(b.getPosition())) {
-
                     particleController.setup(b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
                             b.getVelocity().x * -0.1f + MathUtils.random(-20, 20), b.getVelocity().y * -0.1f + MathUtils.random(-20, 20),
                             0.1f, 2.2f, 4.2f,
@@ -200,45 +357,124 @@ public class GameController {
                 }
             }
         }
+        /*-----------------------------------------------------------------------------------------------------*/
 
+        /*----------------Проверка и активация улучшалок при совпадении точек пересечения героя и улучшалок-----------*/
         for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
             PowerUp p = powerUpsController.getActiveList().get(i);
-            if (hero.getHitArea().overlaps(p.getHitArea())) {
+
+            /*--------------------Магнит--------------------------------*/
+            if (hero.getMagneticField().contains(p.getPosition())) {
+                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+                p.getVelocity().mulAdd(tempVec, 100);
+            }
+            /*-----------------------------------------------------------*/
+
+            if (hero.getHitArea().contains(p.getPosition())) {
                 hero.consume(p);
                 particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y, p.getType());
                 p.deactivate();
             }
         }
 
+        botAndAsteroid();
+        /*-----------------------------------------------------------------------------------------------------*/
 
-        /*-----------Моя реализация притягивания предметов к герою-----------*/
-        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
-            PowerUp p = powerUpsController.getActiveList().get(i);
-            if (p.getHitArea().overlaps(hero.getMagneticHitArea())) {
-                float dst = p.getPosition().dst(hero.getPosition());
-                float halfOverLen = (p.getHitArea().radius + hero.getMagneticHitArea().radius - dst) / 100;
-                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
-                p.getPosition().mulAdd(tempVec, halfOverLen);
-            }
+        /*------------------Моя реализация магнита в игре----------------------*/
+//        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+//            PowerUp p = powerUpsController.getActiveList().get(i);
+//            if (p.getHitArea().overlaps(hero.getMagneticArea())) {
+//                float dst = p.getPosition().dst(hero.getPosition());
+//                float halfOverLen = (p.getHitArea().radius + hero.getMagneticArea().radius - dst) / 100;
+//                tempVec.set(hero.getPosition()).sub(p.getPosition()).nor();
+//                p.getPosition().mulAdd(tempVec, halfOverLen);
+//            }
+//        }
+        /*----------------------------------------------------------------------*/
 
-        }
     }
 
-    private void addAsteroids() {
-        if (asteroidController.getActiveList().isEmpty()) {
-            level += 0.5f;
-            for (int i = 0; i < 3; i++) {
-                float sizeAsteroid = level;
-                if (sizeAsteroid > 1.5f) {
-                    sizeAsteroid = 1.5f;
+    private void botAndAsteroid() {
+        for (int i = 0; i < botControllerMy.getActiveList().size(); i++) {
+            BotMy botMy = botControllerMy.getActiveList().get(i);
+            for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
+                Asteroid a = asteroidController.getActiveList().get(j);
+                if (botMy.getHitArea().overlaps(a.getHitArea())) {
+                    botMy.tryToFire();
+                    float dst = botMy.getPosition().dst(a.getPosition());
+
+                    float halfOverLen = (botMy.getHitArea().radius + a.getHitArea().radius - dst);
+                    tempVec.set(a.getPosition()).sub(botMy.getPosition()).nor();
+                    a.getPosition().mulAdd(tempVec, halfOverLen);
+                    botMy.getPosition().mulAdd(tempVec, -halfOverLen);
+
+                    float sumScl = a.getHitArea().radius + botMy.getHitArea().radius;
+                    a.getVelocity().mulAdd(tempVec, botMy.getHitArea().radius / sumScl * 100);
+                    botMy.getVelocity().mulAdd(tempVec, -a.getHitArea().radius / sumScl * 100);
+                    botMy.takeDamage(level * 2);
+                    a.takeDamage(level * 2);
+                    if (botMy.hp <= 0) {
+                        //bot.setTexture(Assets.getInstance().getAtlas().findRegion("mini"));
+                        getParticleController().getEffectBuilder().buildMonsterSplash(botMy.getPosition().x, botMy.getPosition().y);
+                        botMy.deactivate();
+                    }
+                    if (a.getHp() <= 0) {
+                        getParticleController().getEffectBuilder().buildMonsterSplash(a.getPosition().x, a.getPosition().y);
+                        a.deactivate();
+                    }
                 }
-                asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
-                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                        MathUtils.random(-200, 200),
-                        MathUtils.random(-200, 200), asteroidScale * sizeAsteroid);
             }
         }
     }
+
+    /*---------------------------------Генератор астероидов-------------------------*/
+    public void generateBigAsteroids(int n) {
+        for (int i = 0; i < n; i++) {
+            asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                    MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                    MathUtils.random(-200, 200),
+                    MathUtils.random(-200, 200), 1.0f);
+        }
+    }
+    /*----------------------------------------------------------------------*/
+
+    private void botRndVelocity(float dt) {
+        timerBots += dt;
+        if (timerBots == rndTime) {
+            for (int i = 0; i < MathUtils.random(0, botControllerMy.getActiveList().size()); i++) {
+                BotMy botMy = botControllerMy.getActiveList().get(i);
+               Vector2 vel = botMy.velocity.set(MathUtils.random(-20, 50), MathUtils.random(-100, 300)).nor();
+               botMy.velocity.set(vel);
+                botMy.getPosition().mulAdd(vel, rndTime);
+            }
+            rndTime = MathUtils.random(3.0f, 10.0f);
+        }
+    }
+
+    /*-----------Моя реализация добавления астероидов в игре-----------*/
+//    private void addAsteroids(int astCount) {
+//        if (asteroidController.getActiveList().isEmpty()) {
+//            sizeAsteroid += 0.25f;
+//            if (sizeAsteroid > 1.5f) {
+//                sizeAsteroid = 1.5f;
+//            }
+//            if (astCount > 3) {
+//                astCount = 3;
+//            }
+//            for (int i = 0; i < astCount; i++) {
+//                asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+//                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+//                        MathUtils.random(-200, 200),
+//                        MathUtils.random(-200, 200), MathUtils.random(0.25f, sizeAsteroid));
+//            }
+
+    /*---------------Моя реализация уровня игры-------------*/
+//            gameLevel += 1;
+    /*------------------------------------------------------*/
+//
+//        }
+//    }
+    /*---------------------------------------------------------------------*/
 
     public void dispose() {
         background.dispose();
@@ -302,5 +538,6 @@ public class GameController {
 //            }
 //        }
 //    }
+    /*----------------------------------------------------------------------------------*/
 }
 

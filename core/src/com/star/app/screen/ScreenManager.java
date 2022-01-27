@@ -12,8 +12,12 @@ public class ScreenManager {
     public enum ScreenType {
         GAME, MENU, GAMEOVER, GAME_OVER_MY
     }
+
     public static final int SCREEN_WIDTH = 1280;
+    public static final int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
     public static final int SCREEN_HEIGHT = 720;
+    public static final int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
+
 
     private StarGame game;
     private SpriteBatch batch;
@@ -21,7 +25,11 @@ public class ScreenManager {
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
     private GameOverScreen gameOverScreen;
-    private GameOverScreenMy gameOverScreenMy;
+
+    /*-----------Моя реализация окна паузы в игре-----------*/
+//        private GameOverScreenMy gameOverScreenMy;
+    /*------------------------------------------------------*/
+
     private Screen targetScreen;
     private Viewport viewport;
 
@@ -45,7 +53,10 @@ public class ScreenManager {
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
         this.gameOverScreen = new GameOverScreen(batch);
-        this.gameOverScreenMy = new GameOverScreenMy(batch);
+
+        /*-----------Моя реализация окна паузы в игре-----------*/
+//                this.gameOverScreenMy = new GameOverScreenMy(batch);
+        /*------------------------------------------------------*/
 
         this.loadingScreen = new LoadingScreen(batch);
     }
@@ -74,13 +85,16 @@ public class ScreenManager {
                 break;
             case GAMEOVER:
                 targetScreen = gameOverScreen;
-                gameOverScreen.setDefeatedHero((Hero)args[0]);
+                gameOverScreen.setDefeatedHero((Hero) args[0]);
                 Assets.getInstance().loadAssets(ScreenType.GAMEOVER);
                 break;
-                case GAME_OVER_MY:
-                targetScreen = gameOverScreenMy;
-                Assets.getInstance().loadAssets(ScreenType.GAME_OVER_MY);
-                break;
+
+            /*-----------Моя реализация окна паузы в игре-----------*/
+//                case GAME_OVER_MY:
+//                targetScreen = gameOverScreenMy;
+//                Assets.getInstance().loadAssets(ScreenType.GAME_OVER_MY);
+//                break;
+            /*------------------------------------------------------*/
         }
     }
 
