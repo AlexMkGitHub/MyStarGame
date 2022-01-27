@@ -3,13 +3,13 @@ package com.star.app.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.star.app.game.helpers.ObjectPool;
 
-public class BotController extends ObjectPool<Bot> {
+public class BotControllerMy extends ObjectPool<BotMy> {
     private GameController gc;
     private int hpMax;
     private float enginePower;
     private int weapon;
 
-    public BotController(GameController gc, int xpMax, float enginePower, int weapon) {
+    public BotControllerMy(GameController gc, int xpMax, float enginePower, int weapon) {
         this.gc = gc;
         this.hpMax = xpMax;
         this.enginePower = enginePower;
@@ -36,7 +36,7 @@ public class BotController extends ObjectPool<Bot> {
     }
 
     @Override
-    protected Bot newObject() {
-        return new Bot(gc, hpMax, enginePower, weapon);
+    protected BotMy newObject() {
+        return new BotMy(gc, hpMax, enginePower, weapon);
     }
 }

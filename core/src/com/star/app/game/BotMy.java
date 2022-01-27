@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.MathUtils;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
-public class Bot extends Ship {
+public class BotMy extends Ship {
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
     private boolean active;
     public float botOldAngel;
 
-    public Bot(GameController gc, int hpMax, float enginePower, int weapon) {
+    public BotMy(GameController gc, int hpMax, float enginePower, int weapon) {
         super(gc, hpMax, enginePower, MathUtils.random(0, 4));
         this.texture = Assets.getInstance().getAtlas().findRegion("ship2");
         this.hitArea = new Circle(position, 29);
