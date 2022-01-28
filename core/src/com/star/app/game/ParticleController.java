@@ -56,12 +56,30 @@ public class ParticleController extends ObjectPool<Particle> {
             }
         }
 
+        public void botAddEffect(float x, float y) {
+            for (int i = 0; i < 16; i++) {
+                float angle = 6.28f / 6.0f * i;
+                setup(x, y, (float) Math.cos(angle) * 100, (float) Math.sin(angle) * 100, 0.4f,
+                        2.0f, 5.5f,
+                        0, 1, 0.5f, 1,
+                        1f, 0, 1, 0.5f);
+            }
+        }
+
         public void bulletCollideWithAsteroid(Bullet b) {
             setup(b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
                     b.getVelocity().x * -0.1f + MathUtils.random(-20, 20), b.getVelocity().y * -0.1f + MathUtils.random(-20, 20),
                     0.1f, 2.2f, 4.2f,
                     1.0f, 1.0f, 1.0f, 1,
                     0.0f, 0.0f, 1.0f, 0.5f);
+        }
+
+        public void bulletCollideWithHero(Bullet b) {
+            setup(b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
+                    b.getVelocity().x * -0.1f + MathUtils.random(-20, 20), b.getVelocity().y * -0.1f + MathUtils.random(-20, 20),
+                    0.1f, 2.2f, 4.2f,
+                    1.0f, 1.0f, 0.0f, 1,
+                    0.0f, 1.0f, 1.0f, 0.5f);
         }
 
         // Для каждого типа кораблей свой вид пуль

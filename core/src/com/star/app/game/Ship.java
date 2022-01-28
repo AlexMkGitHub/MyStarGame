@@ -74,6 +74,7 @@ public class Ship implements Poolable {
         this.hitArea.setRadius(BASE_RADIUS);
         this.radiusDetected = new Circle(position, 200);
         createWeapons();
+
         if (gc.getLevel() <= 4) {
             weapon = gc.getLevel();
         } else weapon = 4;
@@ -196,7 +197,12 @@ public class Ship implements Poolable {
     }
 
     public boolean isAlive() {
-        return hp > 0;
+        if (hp > 0) {
+            return true;
+        } else {
+            gc.getParticleController().getEffectBuilder().buildMonsterSplash(position.x, position.y);
+            return false;
+        }
     }
 
     public void activate(float x, float y, float vx, float vy) {

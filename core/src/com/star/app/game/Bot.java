@@ -24,11 +24,11 @@ public class Bot extends Ship implements Poolable {
     }
 
     public Bot(GameController gc) {
-        super(gc, 10 * gc.getLevel(), MathUtils.random(50, 230), MathUtils.random(0, 2));
+        super(gc, 10 * gc.getLevel(), MathUtils.random(100, 200), MathUtils.random(0, 2));
         this.position = new Vector2(0, 0);
         this.velocity = new Vector2(0, 0);
         this.tempVec = new Vector2(0, 0);
-        this.texture = Assets.getInstance().getAtlas().findRegion("ship");
+        this.texture = Assets.getInstance().getAtlas().findRegion("ship" + MathUtils.random(4, 9));
         this.hitArea = new Circle(position, 29);
         this.hitArea.setRadius(BASE_RADIUS);
         this.active = false;
@@ -41,8 +41,8 @@ public class Bot extends Ship implements Poolable {
 
         //Проверка жив бот или нет, если нет, то деактивация
         if (!isAlive()) {
+            hp = hpMax;
             deactivate();
-            gc.getParticleController().getEffectBuilder().buildMonsterSplash(position.x, position.y);
         }
     }
 

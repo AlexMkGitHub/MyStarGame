@@ -9,9 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import com.star.app.StarGame;
 
 public class GameController {
     private Background background;
@@ -31,6 +29,8 @@ public class GameController {
     private float timer;
     private float timerAsteroidsAdds;
     private float timerBots;
+    private float addBotsTimer;
+    private boolean addBots;
     private float rndTime;
     private Music music;
     private Music hahaha;
@@ -143,8 +143,10 @@ public class GameController {
         this.sb = new StringBuilder();
         this.level = 0;
         this.delta = 1.0f;
-        this.rndTime = MathUtils.random(3.0f, 10.0f);
-        this.timerBots = 1.0f;
+        this.rndTime = MathUtils.random(3.0f, 12.0f);
+        this.timerBots = 0.0f;
+        this.addBotsTimer = 0.0f;
+        this.addBots = false;
         this.gameOverTimer = 0.0f;
         this.dtTime = Gdx.graphics.getDeltaTime();
         this.music = Assets.getInstance().getAssetManager().get("audio/mortal.mp3");
@@ -221,29 +223,45 @@ public class GameController {
         /*--------------------------------------------------------*/
 
 
+//        if (asteroidController.getActiveList().size() == 0) {
+//            timerAsteroidsAdds += dt;
+//            if (timerAsteroidsAdds > 4.0f) {
+//                level++;
+//                timer = 0.0f;
+//                timerAsteroidsAdds = 0.0f;
+//                generateBigAsteroids(level <= 3 ? level : 3);
+//                botController.setup(100, 100);
+//                botController.setup(1000, -100);
+//
+//            }
+//        }
+
         /*-------------------Моя реализация: астероиды появляются через 3 сек.----------------*/
-        if (asteroidController.getActiveList().size() == 0) {
+        if (asteroidController.getActiveList().isEmpty() && botController.getActiveList().isEmpty()) {
+            addBots = false;
             timerAsteroidsAdds += dt;
             if (timerAsteroidsAdds > 4.0f) {
                 level++;
                 timer = 0.0f;
                 timerAsteroidsAdds = 0.0f;
+                addBotsTimer = 0.0f;
                 generateBigAsteroids(level <= 3 ? level : 3);
-//                botControllerMy.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
-//                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-//                        MathUtils.random(-200, 200),
-//                        MathUtils.random(-200, 200), MathUtils.random(0, 4));
-//                botControllerMy.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
-//                        MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-//                        MathUtils.random(-200, 200),
-//                        MathUtils.random(-200, 200), MathUtils.random(0, 4));
-
-                botController.setup(100, 100);
-                botController.setup(1000, -100);
-
+                addBots = true;
             }
         }
         /*--------------------------------------------------------------------------------------*/
+
+        if (botController.getActiveList().isEmpty() && !asteroidController.getActiveList().isEmpty() && timerBots == 0 && addBots) {
+            timerBots = MathUtils.random(3.0f, 10.0f);
+        }
+        if (botController.getActiveList().isEmpty() && timerBots > 0.0f) {
+            addBotsTimer += dt;
+            if (addBotsTimer > timerBots) {
+
+                botController.setup(MathUtils.random(-100, ScreenManager.SCREEN_WIDTH + 100), MathUtils.random(-100, ScreenManager.SCREEN_HEIGHT + 100));
+                addBotsTimer = 0.0f;
+            }
+        }
 
         if (!hero.isAlive()) {
             hahaha.play();
@@ -253,7 +271,7 @@ public class GameController {
             getParticleController().getEffectBuilder().buildMonsterSplash(hero.getPosition().x, hero.getPosition().y);
             tempVec.set(-1256.0f, -1256.0f);
             hero.getPosition().mulAdd(tempVec, 0);
-            if (gameOverTimer > 2.5f){
+            if (gameOverTimer > 2.5f) {
                 ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
             }
         }
@@ -308,7 +326,7 @@ public class GameController {
                 Bot b = botController.getActiveList().get(i);
                 if (a.getHitArea().overlaps(b.getHitArea())) {
                     float dst = a.getPosition().dst(b.getPosition());
-                    float halfOverLen = (a.getHitArea().radius + b.getHitArea().radius - dst) / 100;
+                    float halfOverLen = (a.getHitArea().radius + b.getHitArea().radius - dst) / 2;
                     tempVec.set(b.getPosition()).sub(a.getPosition()).nor();
                     b.getPosition().mulAdd(tempVec, halfOverLen);
                     a.getPosition().mulAdd(tempVec, -halfOverLen);
@@ -378,8 +396,17 @@ public class GameController {
                 Asteroid a = asteroidController.getActiveList().get(j);
                 if (a.getHitArea().contains(b.getPosition())) {
                     particleController.getEffectBuilder().bulletCollideWithAsteroid(b);
-
                     b.deactivate();
+                    if (a.getHp() <= 0) {
+                        for (int d = 0; d < MathUtils.random(1, 100); d++) {
+                            if (d <= 1) {
+                                if (botController.getActiveList().size() <= level && botController.getActiveList().size() < 2) {
+                                    botController.setup(a.getPosition().x, a.getPosition().y);
+                                }
+                            }
+                        }
+                    }
+
                     if (a.takeDamage(b.getOwner().getCurrentWeapon().getDamage())) {
                         if (b.getOwner().getOwnerType() == OwnerType.PLAYER) {
                             hero.addScore(a.getHpMax() * 100);
@@ -401,6 +428,7 @@ public class GameController {
 
             if (b.getOwner().getOwnerType() == OwnerType.BOT) {
                 if (hero.getHitArea().contains(b.getPosition())) {
+                    particleController.getEffectBuilder().bulletCollideWithHero(b);
                     hero.takeDamage(b.getOwner().getCurrentWeapon().getDamage());
                     b.deactivate();
                 }
@@ -410,6 +438,7 @@ public class GameController {
                 for (int j = 0; j < botController.getActiveList().size(); j++) {
                     Bot bot = botController.getActiveList().get(j);
                     if (bot.getHitArea().contains(b.getPosition())) {
+                        particleController.getEffectBuilder().bulletCollideWithAsteroid(b);
                         bot.takeDamage(b.getOwner().getCurrentWeapon().getDamage());
                         b.deactivate();
                     }

@@ -21,12 +21,13 @@ public class BotController extends ObjectPool<Bot> {
     public void render(SpriteBatch batch) {
         for (int i = 0; i < activeList.size(); i++) {
             Bot b = activeList.get(i);
-                    b.render(batch);
+            b.render(batch);
         }
     }
 
     public void setup(float x, float y) {
         getActiveElement().activate(x, y);
+        gc.getParticleController().getEffectBuilder().botAddEffect(x, y);
     }
 
     public void update(float dt) {
