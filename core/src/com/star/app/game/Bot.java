@@ -47,30 +47,30 @@ public class Bot extends Ship implements Poolable {
     }
 
     private void boardControl(float dt) {
-        tempVec.set(gc.getHero().getPosition()).sub(position).nor();
-        angle = tempVec.angleDeg();
+        if (gc.isHeroVisible()) {
+            tempVec.set(gc.getHero().getPosition()).sub(position).nor();
+            angle = tempVec.angleDeg();
 
-        if (gc.getHero().getPosition().dst(position) > 200) {
-            accelrrate(dt);
-            /*------------Эффект работы двигателя при ускорении---------------*/
-            if (velocity.len() > 50.0f) {
-                float bx = position.x + MathUtils.cosDeg(angle + 180) * 20;
-                float by = position.y + MathUtils.sinDeg(angle + 180) * 20;
-                for (int i = 0; i < 3; i++) {
-                    gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
-                            velocity.x * -0.2f + MathUtils.random(-20, 20), velocity.y * -0.2f + MathUtils.random(-20, 20),
-                            0.5f, 1.2f, 0.2f,
-                            1.0f, 0.0f, 0.0f, 1,
-                            1.0f, 0.5f, 0f, 0);
+            if (gc.getHero().getPosition().dst(position) > 200) {
+                accelrrate(dt);
+                /*------------Эффект работы двигателя при ускорении---------------*/
+                if (velocity.len() > 50.0f) {
+                    float bx = position.x + MathUtils.cosDeg(angle + 180) * 20;
+                    float by = position.y + MathUtils.sinDeg(angle + 180) * 20;
+                    for (int i = 0; i < 3; i++) {
+                        gc.getParticleController().setup(bx + MathUtils.random(-4, 4), by + MathUtils.random(-4, 4),
+                                velocity.x * -0.2f + MathUtils.random(-20, 20), velocity.y * -0.2f + MathUtils.random(-20, 20),
+                                0.5f, 1.2f, 0.2f,
+                                1.0f, 0.0f, 0.0f, 1,
+                                1.0f, 0.5f, 0f, 0);
+                    }
                 }
             }
+
+            if (gc.getHero().getPosition().dst(position) < 300 && gc.getHero().hp > 0) {
+                tryToFire();
+            }
         }
-
-        if (gc.getHero().getPosition().dst(position) < 300 && gc.getHero().hp > 0) {
-            tryToFire();
-
-        }
-
     }
 
     public void deactivate() {

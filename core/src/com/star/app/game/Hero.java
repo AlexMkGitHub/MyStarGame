@@ -34,13 +34,13 @@ public class Hero extends Ship {
     /*---------------------------------------------------*/
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
-
     private Circle magneticField;
     private int score;
     private int scoreView;
     private StringBuilder sb;
     private int money;
     private Shop shop;
+    private int heroLife;
 
     /*-----------Моя реализация паузы в игре-----------*/
     //    public static int scorePublic;
@@ -88,6 +88,12 @@ public class Hero extends Ship {
         return magneticField;
     }
 
+    public int getHeroLife() {
+        return heroLife;
+    }
+
+
+
     /*-----------Моя реализация магнита в игре-----------*/
 //    public Circle getMagneticHitArea() {
 //        return magneticHitArea;
@@ -101,7 +107,7 @@ public class Hero extends Ship {
     /*--------------------------------------------------*/
 
     public Hero(GameController gc) {
-        super(gc, 100, 500f, 0);
+        super(gc, 5, 500f, 0);
         this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
         this.velocity = new Vector2(0, 0);
         this.texture = Assets.getInstance().getAtlas().findRegion("ship10");
@@ -112,6 +118,7 @@ public class Hero extends Ship {
         this.magneticField = new Circle(position, 100);
         this.hitArea.setRadius(BASE_RADIUS);
         this.ownerType = OwnerType.PLAYER;
+        this.heroLife = 5;
 
 
         /*-----------Моя реализация паузы в игре-----------*/
@@ -144,6 +151,7 @@ public class Hero extends Ship {
 //        sb.append("Game Level: ").append(gc.getGameLevel()).append("\n");
         /*----------------------------------------------------------------------------*/
 
+        sb.append("LIFE: ").append(gc.getHeroLife()).append("\n");
         sb.append("SCORE: ").append(scoreView).append("\n");
         sb.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
         sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");

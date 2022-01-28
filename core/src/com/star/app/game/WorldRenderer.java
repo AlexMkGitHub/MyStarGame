@@ -54,7 +54,7 @@ public class WorldRenderer {
                 font72.draw(batch, sb, 0, ScreenManager.SCREEN_HALF_HEIGHT, ScreenManager.SCREEN_WIDTH,
                         Align.center, false);
             }
-            if (gc.getTimerAsteroidsAdds() > 2.5f) {
+            if (gc.getTimerAsteroidsAdds() > 2.5f && gc.getTimerAsteroidsAdds() < 3.5f) {
                 fight.play();
             }
         }

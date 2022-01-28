@@ -197,12 +197,7 @@ public class Ship implements Poolable {
     }
 
     public boolean isAlive() {
-        if (hp > 0) {
-            return true;
-        } else {
-            gc.getParticleController().getEffectBuilder().buildMonsterSplash(position.x, position.y);
-            return false;
-        }
+        return hp > 0;
     }
 
     public void activate(float x, float y, float vx, float vy) {
