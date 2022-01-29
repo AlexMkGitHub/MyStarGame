@@ -11,7 +11,7 @@ public class ParticleController extends ObjectPool<Particle> {
 
     public class EffectBuilder {
 
-        public void buildMonsterSplash(float x, float y) {
+        public void destroyEffect(float x, float y) {
             for (int i = 0; i < 15; i++) {
                 float randomAngle = MathUtils.random(0, 6.28f);
                 float randomSpeed = MathUtils.random(0, 50.0f);
@@ -19,6 +19,17 @@ public class ParticleController extends ObjectPool<Particle> {
                         1.2f, 2.0f, 5.8f,
                         1, 1, 0, 1,
                         1, 0, 0, 0.2f);
+            }
+        }
+
+        public void destroyAsteroid(float x, float y) {
+            for (int i = 0; i < 15; i++) {
+                float randomAngle = MathUtils.random(0, 6.28f);
+                float randomSpeed = MathUtils.random(0, 50.0f);
+                setup(x, y, (float) Math.cos(randomAngle) * randomSpeed, (float) Math.sin(randomAngle) * randomSpeed,
+                        0.5f, 2.0f, 4.8f,
+                        0.5f, 0, 0.3f, 0.5f,
+                        0.3f, 0, 0.7f, 0.5f);
             }
         }
 
@@ -94,12 +105,20 @@ public class ParticleController extends ObjectPool<Particle> {
                                 1, 1, 1, 0);
                     }
                     break;
+//                case BOT:
+//                    setup(b.getPosition().x, b.getPosition().y,
+//                            b.getVelocity().x * 0.1f + MathUtils.random(-10, 10), b.getVelocity().y * 0.1f + MathUtils.random(-10, 10),
+//                            0.13f, 2.2f, 1.5f,
+//                            0.0f, 0.9f, 0, 1,
+//                            0, 0.8f, 0.1f, 0);
+//                    break;
+
                 case BOT:
                     setup(b.getPosition().x, b.getPosition().y,
                             b.getVelocity().x * 0.1f + MathUtils.random(-10, 10), b.getVelocity().y * 0.1f + MathUtils.random(-10, 10),
-                            0.13f, 2.2f, 1.5f,
-                            0.0f, 0.9f, 0, 1,
-                            0, 0.8f, 0.1f, 0);
+                            0.07f, 2.2f, 0.85f,
+                            0.2f, 0.8f, 0.0f, 0.5f,
+                            0.5f, 0.7f, 0.8f, 1);
                     break;
 
             }

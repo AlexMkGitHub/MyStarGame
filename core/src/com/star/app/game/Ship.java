@@ -6,6 +6,9 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.star.app.game.GameController;
+import com.star.app.game.OwnerType;
+import com.star.app.game.Weapon;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
@@ -56,11 +59,15 @@ public class Ship implements Poolable {
     }
 
 
+    public TextureRegion getTexture() {
+        return texture;
+    }
+
     public void setTexture(TextureRegion texture) {
         this.texture = texture;
     }
 
-    public Ship(GameController gc, int hpMax, float enginePower, int weapon) {
+    public Ship(GameController gc, int hpMax, float enginePower) {
         this.gc = gc;
         this.hpMax = hpMax;
         this.hp = hpMax;
@@ -73,12 +80,26 @@ public class Ship implements Poolable {
         this.hitArea = new Circle(position, 29);
         this.hitArea.setRadius(BASE_RADIUS);
         this.radiusDetected = new Circle(position, 200);
+        if (gc.getLevel() <= 3) {
+            weaponNum = 0;
+        } else if (gc.getLevel() > 3 && gc.getLevel() < 6) {
+            weaponNum = MathUtils.random(0, 1);
+        } else if (gc.getLevel() > 6 && gc.getLevel() < 10) {
+            weaponNum = MathUtils.random(0, 2);
+        } else if (gc.getLevel() > 10) {
+            weaponNum = MathUtils.random(1, 3);
+        } else if (gc.getLevel() > 15) {
+            weaponNum = MathUtils.random(2, 4);
+        }
+
+        //this.hpView = new HpView(this);
         createWeapons();
 
-        if (gc.getLevel() <= 4) {
-            weapon = gc.getLevel();
-        } else weapon = 4;
-        this.currentWeapon = weapons[MathUtils.random(0, weapon)];
+//        if (gc.getLevel() <= 4) {
+//            weapon = gc.getLevel();
+//        } else weapon = 4;
+//        this.currentWeapon = weapons[MathUtils.random(0, weapon)];
+        this.currentWeapon = weapons[weaponNum];
         this.active = false;
     }
 

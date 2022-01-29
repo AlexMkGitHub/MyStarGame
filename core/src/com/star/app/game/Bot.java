@@ -1,9 +1,13 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.GameController;
+import com.star.app.game.OwnerType;
+import com.star.app.game.Ship;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.utils.Assets;
 
@@ -13,18 +17,20 @@ public class Bot extends Ship implements Poolable {
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
     private boolean active;
     private Vector2 tempVec;
-    private int weapon;
+    private int rndHeroPresentGift;
+    private int scale;
 
     public int getHp() {
         return hp;
     }
 
+    @Override
     public void setTexture(TextureRegion texture) {
         this.texture = texture;
     }
 
     public Bot(GameController gc) {
-        super(gc, 10 * gc.getLevel(), MathUtils.random(100, 200), MathUtils.random(0, 2));
+        super(gc, 10 * gc.getLevel(), MathUtils.random(100, 200));
         this.position = new Vector2(0, 0);
         this.velocity = new Vector2(0, 0);
         this.tempVec = new Vector2(0, 0);
@@ -33,17 +39,45 @@ public class Bot extends Ship implements Poolable {
         this.hitArea.setRadius(BASE_RADIUS);
         this.active = false;
         this.ownerType = OwnerType.BOT;
+        this.rndHeroPresentGift = 0;
+        this.scale = 0;
+        if (gc.getLevel() <= 3) {
+            scale = 1;
+        } else if (gc.getLevel() > 3 && gc.getLevel() < 6) {
+            scale = MathUtils.random(1, 2);
+        } else if (gc.getLevel() > 6 && gc.getLevel() < 10) {
+            scale = MathUtils.random(1, 3);
+        } else if (gc.getLevel() > 10) {
+            scale = MathUtils.random(2, 3);
+        } else if (gc.getLevel() > 15) {
+            scale = MathUtils.random(3, 5);
+        }
     }
 
+    @Override
     public void update(float dt) {
         super.update(dt);
         boardControl(dt);
-
         //Проверка жив бот или нет, если нет, то деактивация
         if (!isAlive()) {
+            if (hp <= 0) {
+                rndHeroPresentGift = MathUtils.random(1, 100);
+            }
             hp = hpMax;
             deactivate();
+            gc.getParticleController().getEffectBuilder().destroyEffect(position.x, position.y);
         }
+        if (rndHeroPresentGift > 0 && rndHeroPresentGift <= 50) {
+            //gc.getHero().botDestroyPresent(MathUtils.random(1, 3));
+            gc.getHero().botDestroyPresent(MathUtils.random(2));
+            rndHeroPresentGift = 0;
+        }
+    }
+
+    @Override
+    public void render(SpriteBatch batch) {
+        batch.draw(texture, position.x - 32, position.y - 32, 32, 32, 64, 64, scale,
+                scale, angle);
     }
 
     private void boardControl(float dt) {

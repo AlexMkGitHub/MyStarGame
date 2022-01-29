@@ -3,6 +3,7 @@ package com.star.app.game;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.star.app.game.GameController;
 import com.star.app.screen.utils.Assets;
 
 public class Weapon {

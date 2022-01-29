@@ -24,11 +24,11 @@ powerups
   orig: 360, 240
   offset: 0, 0
   index: -1
-asteroid
+ast3
   rotate: false
   xy: 726, 739
-  size: 256, 256
-  orig: 256, 256
+  size: 260, 256
+  orig: 260, 256
   offset: 0, 0
   index: -1
 ship9
@@ -80,9 +80,16 @@ ship2
   orig: 64, 64
   offset: 0, 0
   index: -1
-smButton
+xp
   rotate: false
   xy: 2, 981
+  size: 120, 32
+  orig: 120, 32
+  offset: 0, 0
+  index: -1
+smButton
+  rotate: false
+  xy: 124, 981
   size: 120, 32
   orig: 120, 32
   offset: 0, 0
@@ -113,58 +120,114 @@ images2.png
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-ship10
+asteroid
   rotate: false
   xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast8
+  rotate: false
+  xy: 260, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast7
+  rotate: false
+  xy: 518, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast6
+  rotate: false
+  xy: 2, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast5
+  rotate: false
+  xy: 2, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast4
+  rotate: false
+  xy: 260, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast2
+  rotate: false
+  xy: 518, 260
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ast1
+  rotate: false
+  xy: 260, 518
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+ship10
+  rotate: false
+  xy: 776, 2
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 ship6
   rotate: false
-  xy: 2, 132
+  xy: 776, 132
   size: 128, 120
   orig: 128, 120
   offset: 0, 0
   index: -1
 simpleButton
   rotate: false
-  xy: 132, 2
+  xy: 518, 518
   size: 320, 80
   orig: 320, 80
   offset: 0, 0
   index: -1
 ship
   rotate: false
-  xy: 132, 84
+  xy: 906, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 money
   rotate: false
-  xy: 132, 150
+  xy: 906, 132
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 bot
   rotate: false
-  xy: 198, 84
+  xy: 2, 776
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 ammo
   rotate: false
-  xy: 198, 150
+  xy: 2, 842
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 aidkit
   rotate: false
-  xy: 264, 84
+  xy: 2, 908
   size: 64, 64
   orig: 64, 64
   offset: 0, 0

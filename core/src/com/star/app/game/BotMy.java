@@ -2,6 +2,7 @@ package com.star.app.game;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.star.app.game.GameController;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
@@ -12,7 +13,7 @@ public class BotMy extends Ship {
     public float botOldAngel;
 
     public BotMy(GameController gc, int hpMax, float enginePower, int weapon) {
-        super(gc, hpMax, enginePower, MathUtils.random(0, 4));
+        super(gc, hpMax, enginePower);
         this.texture = Assets.getInstance().getAtlas().findRegion("ship2");
         this.hitArea = new Circle(position, 29);
         this.hitArea.setRadius(BASE_RADIUS);

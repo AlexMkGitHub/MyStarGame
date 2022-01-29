@@ -4,21 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.star.app.game.Background;
+import com.star.app.game.BackgroundOver;
 import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 
 
 public class GameOverScreen extends AbstractScreen {
-    private Background background;
+    private BackgroundOver backgroundOver;
     private BitmapFont font72;
     private BitmapFont font48;
     private BitmapFont font24;
@@ -37,7 +31,7 @@ public class GameOverScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        this.background = new Background(null);
+        this.backgroundOver = new BackgroundOver(null);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf");
         this.font48 = Assets.getInstance().getAssetManager().get("fonts/font48.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
@@ -49,7 +43,7 @@ public class GameOverScreen extends AbstractScreen {
     }
 
     public void update(float dt) {
-        background.update(dt);
+        backgroundOver.update(dt);
         if (Gdx.input.justTouched()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
         }
@@ -60,7 +54,7 @@ public class GameOverScreen extends AbstractScreen {
         update(delta);
         ScreenUtils.clear(0.0f, 0.0f, 0.0f, 1);
         batch.begin();
-        background.render(batch);
+        backgroundOver.render(batch);
         font72.draw(batch, "Game over!", 0, 600, 1280, Align.center, false);
         sb.setLength(0);
         sb.append("SCORE: ").append(defeatedHero.getScore()).append("\n");
@@ -72,6 +66,6 @@ public class GameOverScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        background.dispose();
+        backgroundOver.dispose();
     }
 }
