@@ -1,9 +1,11 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.star.app.game.GameController;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 import javafx.stage.Screen;
@@ -42,17 +44,14 @@ public class WorldRenderer {
         gc.getHero().render(batch);
         gc.getHero().renderGUI(batch, font20);
         gc.getBotController().render(batch);
-
-        /*-------------------Моя реализация: оповещении о поднятии уровня исчезает через 1.5 сек.----------------*/
-        if (gc.getAsteroidController().getActiveList().isEmpty()) {
-            if (gc.getTimerAsteroidsAdds() > 0.75f && gc.getTimerAsteroidsAdds() < 2.5f) {
-                sb.setLength(0);
-                sb.append("Level: ").append(gc.getLevel() + 1);
-                font72.draw(batch, sb, 0, ScreenManager.SCREEN_HALF_HEIGHT, ScreenManager.SCREEN_WIDTH,
-                        Align.center, false);
-            }
+        gc.getHpView().render(batch);
+        if (gc.getTimerAsteroidsAdds() > 3.0f) {
+            gameLevelShow(gc.getLevel(), batch);
         }
-        /*----------------------------------------------------------------------------------------------------*/
+
+
+
+
 
         /*-----------Моя реализация улучшалок-----------*/
 //        gc.getPowerAddController().render(batch);
@@ -66,5 +65,16 @@ public class WorldRenderer {
         /*-------------------------------------------------*/
     }
 
+    public void gameLevelShow(int level, SpriteBatch batch) {
+        /*-------------------Моя реализация: оповещении о поднятии уровня исчезает через 1.5 сек.----------------*/
+        if (gc.getAsteroidController().getActiveList().isEmpty() && gc.getBotController().getActiveList().isEmpty()) {
+            sb.setLength(0);
+            sb.append("Level: ").append(level + 1);
+            font72.draw(batch, sb, 0, ScreenManager.SCREEN_HALF_HEIGHT, ScreenManager.SCREEN_WIDTH,
+                    Align.center, false);
+        }
+    }
+    /*----------------------------------------------------------------------------------------------------*/
 }
+
 

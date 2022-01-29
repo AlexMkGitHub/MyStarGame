@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.GameController;
 import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;

@@ -41,6 +41,9 @@ public class Assets {
                 assetManager.load("images/game.pack", TextureAtlas.class);
                 assetManager.load("audio/shoot.mp3", Sound.class);
                 assetManager.load("audio/mortal.mp3", Music.class);
+                assetManager.load("audio/fight.mp3", Music.class);
+                assetManager.load("audio/hahaha.mp3", Music.class);
+                assetManager.load("audio/general_music.mp3", Music.class);
 
 
                 createStandardFont(32);
@@ -65,16 +68,6 @@ public class Assets {
                 createStandardFont(24);
                 break;
 
-            /*-----------Моя реализация магнита в игре-----------*/
-//            case GAME_OVER_MY:
-//                assetManager.load("images/game.pack", TextureAtlas.class);
-//                createStandardFont(84);
-//                createStandardFont(32);
-//                createStandardFont(24);
-//                break;
-            /*----------------------------------------------------*/
-
-
         }
     }
 
@@ -94,7 +87,6 @@ public class Assets {
 
     public void makeLinks() {
         textureAtlas = assetManager.get("images/game.pack", TextureAtlas.class);
-
     }
 
     public void clear() {

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.GameController;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
@@ -37,7 +38,7 @@ public class Background {
         }
     }
 
-    private final int STAR_COUNT = 2000;
+    private final int STAR_COUNT = 1000;
     private GameController gc;
     private Texture textureCosmos;
     private TextureRegion textureStar;
@@ -46,7 +47,7 @@ public class Background {
     public Background(GameController gc) {
         this.gc = gc;
         //this.textureCosmos = new Texture("images/space3.png");
-        this.textureCosmos = new Texture("images/bg.png");
+        this.textureCosmos = new Texture("images/space2.png");
         this.textureStar = Assets.getInstance().getAtlas().findRegion("star16");
         this.stars = new Star[STAR_COUNT];
         for (int i = 0; i < stars.length; i++) {

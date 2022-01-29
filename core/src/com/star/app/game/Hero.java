@@ -9,6 +9,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.star.app.game.GameController;
+import com.star.app.game.OwnerType;
+import com.star.app.game.PowerUp;
+import com.star.app.game.Ship;
+import com.star.app.game.Shop;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
@@ -34,13 +39,13 @@ public class Hero extends Ship {
     /*---------------------------------------------------*/
     private final float BASE_SIZE = 64;
     private final float BASE_RADIUS = BASE_SIZE / 2 - 3;
-
     private Circle magneticField;
     private int score;
     private int scoreView;
     private StringBuilder sb;
     private int money;
     private Shop shop;
+    private int heroLife;
 
     /*-----------Моя реализация паузы в игре-----------*/
     //    public static int scorePublic;
@@ -88,6 +93,12 @@ public class Hero extends Ship {
         return magneticField;
     }
 
+    public int getHeroLife() {
+        return heroLife;
+    }
+
+
+
     /*-----------Моя реализация магнита в игре-----------*/
 //    public Circle getMagneticHitArea() {
 //        return magneticHitArea;
@@ -101,16 +112,20 @@ public class Hero extends Ship {
     /*--------------------------------------------------*/
 
     public Hero(GameController gc) {
-        super(gc, 100, 500f, 0);
+        super(gc, 100, 500f);
         this.position = new Vector2(ScreenManager.SCREEN_WIDTH / 2, ScreenManager.SCREEN_HEIGHT / 2);
         this.velocity = new Vector2(0, 0);
-        this.texture = Assets.getInstance().getAtlas().findRegion("ship");
+        this.texture = Assets.getInstance().getAtlas().findRegion("ship10");
         this.hitArea = new Circle(position, 29);
-        this.money = 1500;
+        this.money = 500;
         this.sb = new StringBuilder();
         this.shop = new Shop(this);
         this.magneticField = new Circle(position, 100);
         this.hitArea.setRadius(BASE_RADIUS);
+        this.ownerType = OwnerType.PLAYER;
+        this.heroLife = 5;
+        weaponNum = 0;
+        //hpView.setVisible(true);
 
 
         /*-----------Моя реализация паузы в игре-----------*/
@@ -143,6 +158,7 @@ public class Hero extends Ship {
 //        sb.append("Game Level: ").append(gc.getGameLevel()).append("\n");
         /*----------------------------------------------------------------------------*/
 
+        sb.append("LIFE: ").append(gc.getHeroLife()).append("\n");
         sb.append("SCORE: ").append(scoreView).append("\n");
         sb.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
         sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
@@ -163,13 +179,10 @@ public class Hero extends Ship {
     public void update(float dt) {
         super.update(dt);
         updateScore(dt);
-        boardControl(dt);
-        magneticField.setPosition(position);
-        float stopKoef = 1.0f - 0.8f * dt;
-        if (stopKoef < 0.0f) {
-            stopKoef = 0.0f;
+        if (isAlive()) {
+            boardControl(dt);
         }
-        velocity.scl(stopKoef);
+        magneticField.setPosition(position);
 
         /*-----------Моя реализация магнита в игре-----------*/
 //        magneticHitArea.setPosition(position);
@@ -211,8 +224,7 @@ public class Hero extends Ship {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
-            velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
+            accelrrate(dt);
 
             /*------------Эффект работы двигателя при ускорении---------------*/
             if (velocity.len() > 50.0f) {
@@ -230,8 +242,7 @@ public class Hero extends Ship {
 
         /*------------Управление задним ходом корабля-------------------------------------*/
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            velocity.x -= MathUtils.cosDeg(angle) * enginePower / 2 * dt;
-            velocity.y -= MathUtils.sinDeg(angle) * enginePower / 2 * dt;
+            brake(dt);
 
             /*------------Эффект работы двигателя при ускорении---------------*/
             float bx = position.x + MathUtils.cosDeg(angle + 90) * 20;
@@ -256,7 +267,7 @@ public class Hero extends Ship {
 
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.P)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             shop.setVisible(true);
             setPause(true);
         }
@@ -285,10 +296,7 @@ public class Hero extends Ship {
             case HP:
                 if (hp < hpMax) {
                     hp += Skill.HP.power;
-                    if (hp > hpMax) {
-                        hp = hpMax;
-                        return true;
-                    }
+                    return true;
                 }
                 break;
 
@@ -338,6 +346,31 @@ public class Hero extends Ship {
                 currentWeapon.addAmmos(p.getPower());
                 sb.append("Ammo + ").append(p.getPower());
                 gc.getInfoController().setup(p.getPosition().x, p.getPosition().y, sb.toString(), Color.PURPLE);
+                break;
+        }
+    }
+
+    public void botDestroyPresent(int present) {
+        sb.setLength(0);
+        switch (present) {
+            case 1:
+                int oldHp = hp;
+                hp += 50;
+                if (hp > hpMax) {
+                    hp = hpMax;
+                }
+                sb.append("HP + ").append(hp - oldHp);
+                gc.getInfoController().setup(position.x - 32, position.y + 32, sb.toString(), Color.GREEN);
+                break;
+            case 2:
+                money += 50;
+                sb.append("Money + " + 50);
+                gc.getInfoController().setup(position.x - 32, position.y + 32, sb.toString(), Color.ORANGE);
+                break;
+            case 3:
+                currentWeapon.addAmmos(50);
+                sb.append("Ammo + 50");
+                gc.getInfoController().setup(position.x - 32, position.y + 32, sb.toString(), Color.PURPLE);
                 break;
         }
     }

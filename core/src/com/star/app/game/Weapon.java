@@ -3,6 +3,7 @@ package com.star.app.game;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.star.app.game.GameController;
 import com.star.app.screen.utils.Assets;
 
 public class Weapon {
@@ -65,7 +66,7 @@ public class Weapon {
                 y = ship.getPosition().y + MathUtils.sinDeg(ship.getAngle() + slots[i].y) * slots[i].x;
                 vx = ship.getVelocity().x + bulletSpeed * MathUtils.cosDeg(ship.getAngle() + slots[i].z);
                 vy = ship.getVelocity().y + bulletSpeed * MathUtils.sinDeg(ship.getAngle() + slots[i].z);
-                gc.getBulletController().setup(x, y, vx, vy);
+                gc.getBulletController().setup(ship, x, y, vx, vy);
             }
 
         }
