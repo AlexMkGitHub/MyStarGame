@@ -179,7 +179,9 @@ public class Hero extends Ship {
     public void update(float dt) {
         super.update(dt);
         updateScore(dt);
-        boardControl(dt);
+        if (isAlive()) {
+            boardControl(dt);
+        }
         magneticField.setPosition(position);
 
         /*-----------Моя реализация магнита в игре-----------*/
@@ -294,10 +296,7 @@ public class Hero extends Ship {
             case HP:
                 if (hp < hpMax) {
                     hp += Skill.HP.power;
-                    if (hp > hpMax) {
-                        hp = hpMax;
-                        return true;
-                    }
+                    return true;
                 }
                 break;
 

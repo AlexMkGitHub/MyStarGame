@@ -33,6 +33,9 @@ public abstract class ObjectPool<T extends Poolable> {
     // пользователю ссылку на только что полученный активный элемент чтобы его
     // можно было настроить
     public T getActiveElement() {
+        if (freeList.size() > 1) {
+            freeList.clear();
+        }
         if (freeList.size() == 0) {
             freeList.add(newObject());
         }

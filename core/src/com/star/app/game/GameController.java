@@ -42,11 +42,13 @@ public class GameController {
     private Music fight;
     private StringBuilder sb;
     private BotHpView botHpView;
+    private WorldRenderer wr;
     private float delta;
     private float dtTime;
     private float gameOverTimer;
     private float sizeAsteroid;
     private boolean heroVisible;
+    private SpriteBatch batch;
 
     /*-----------Моя реализация проверки жив герой или нет-----------*/
     private boolean crashHero;
@@ -150,6 +152,7 @@ public class GameController {
 //        this.powerAddController = new PowerAddController(this);
 
         /*-----------Моя реализация проверки жив герой или нет-----------*/
+        this.batch = batch;
         this.crashHero = false;
         this.powerUpsController = new PowerUpsController(this);
         this.background = new Background(this);
@@ -175,6 +178,7 @@ public class GameController {
         this.gameOverTimer = 0.0f;
         this.sizeAsteroid = 0.0f;
         this.dtTime = Gdx.graphics.getDeltaTime();
+        this.wr = new WorldRenderer(this, batch);
         this.music = Assets.getInstance().getAssetManager().get("audio/general_music.mp3");
         this.hahaha = Assets.getInstance().getAssetManager().get("audio/hahaha.mp3");
         this.fight = Assets.getInstance().getAssetManager().get("audio/fight.mp3");
@@ -271,14 +275,15 @@ public class GameController {
                 asteroidController.getActiveList().clear();
                 addBots = false;
                 timerAsteroidsAdds += dt;
-                if (timerAsteroidsAdds > 2.5f && timerAsteroidsAdds < 3.5f) {
+                if (asteroidController.getActiveList().isEmpty() && botController.getActiveList().isEmpty() &&
+                        timerAsteroidsAdds > 2.5f && timerAsteroidsAdds < 3.0f) {
                     fight.play();
                 }
                 if (timerAsteroidsAdds > 4.0f) {
-                    level += 1;
+                    addBotsTimer = 0.0f;
                     timer = 0.0f;
                     timerAsteroidsAdds = 0.0f;
-                    addBotsTimer = 0.0f;
+                    level += 1;
                     addAsteroids(level);
                     //generateBigAsteroids(level <= 3 ? level : 3);
                     addBots = true;
@@ -340,7 +345,6 @@ public class GameController {
                 music.play();
             }
             if (heroLife <= 0 && gameOverTimer > 2.5f) {
-                level += 1;
                 ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
             }
         }
@@ -621,15 +625,15 @@ public class GameController {
     private void addAsteroids(int astCount) {
         if (asteroidController.getActiveList().isEmpty()) {
             if (level >= 0 && level < 5) {
-                sizeAsteroid = 0;
+                sizeAsteroid = 0.5f;
             } else if (level >= 5 && level < 10) {
                 sizeAsteroid = 0.5f;
             } else if (level >= 10) {
                 sizeAsteroid = 0.75f;
             }
             sizeAsteroid += 0.25f;
-            if (sizeAsteroid > 1.5f) {
-                sizeAsteroid = 1.5f;
+            if (sizeAsteroid > 2.0f) {
+                sizeAsteroid = 2.0f;
             }
             if (astCount > 3) {
                 astCount = 3;
@@ -638,7 +642,7 @@ public class GameController {
                 asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
                         MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                         MathUtils.random(-200, 200),
-                        MathUtils.random(-200, 200), MathUtils.random(0.25f, sizeAsteroid));
+                        MathUtils.random(-200, 200), MathUtils.random(0.5f, sizeAsteroid));
             }
         }
     }

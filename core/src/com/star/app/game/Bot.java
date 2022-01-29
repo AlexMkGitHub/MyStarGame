@@ -40,16 +40,15 @@ public class Bot extends Ship implements Poolable {
         this.active = false;
         this.ownerType = OwnerType.BOT;
         this.rndHeroPresentGift = 0;
-        this.scale = 0;
         if (gc.getLevel() <= 3) {
             scale = 1;
-        } else if (gc.getLevel() > 3 && gc.getLevel() < 6) {
+        } else if (gc.getLevel() > 3 && gc.getLevel() <= 8) {
             scale = MathUtils.random(1, 2);
-        } else if (gc.getLevel() > 6 && gc.getLevel() < 10) {
+        } else if (gc.getLevel() > 8 && gc.getLevel() <= 15) {
             scale = MathUtils.random(1, 3);
-        } else if (gc.getLevel() > 10) {
+        } else if (gc.getLevel() > 15 && gc.getLevel() <= 25) {
             scale = MathUtils.random(2, 3);
-        } else if (gc.getLevel() > 15) {
+        } else if (gc.getLevel() > 25) {
             scale = MathUtils.random(3, 5);
         }
     }
@@ -109,6 +108,7 @@ public class Bot extends Ship implements Poolable {
 
     public void deactivate() {
         active = false;
+
     }
 
     public void activate(float x, float y) {

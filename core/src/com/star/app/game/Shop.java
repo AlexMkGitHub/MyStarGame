@@ -80,6 +80,9 @@ public class Shop extends Group {
                     if (hero.getHp() < hero.getHpMax()) {
                         if (hero.upgrade(Hero.Skill.HP)) {
                             hero.decreaseMoney(Hero.Skill.HP.cost);
+                            if (hero.hp > hero.hpMax) {
+                                hero.hp = hero.hpMax;
+                            }
                         }
                     }
                 }
